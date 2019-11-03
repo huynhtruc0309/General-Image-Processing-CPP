@@ -1,0 +1,7 @@
+﻿  ColorTransformer.cpp
+  main.cpp
+d:\xlas\lab01\lab01\main.cpp(1): warning C4603: '_CRT_SECURE_NO_WARNINGS': macro is not defined or definition is different after precompiled header use
+  d:\xlas\lab01\lab01\main.cpp(1): note: Add macro to precompiled header instead of defining here
+  d:\xlas\lab01\lab01\main.cpp(2): note: use of precompiled header
+  Generating Code...
+  Lab01.vcxproj -> D:\XLAS\Lab01\x64\Debug\Lab01.exe

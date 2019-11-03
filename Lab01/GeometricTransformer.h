@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "pch.h"
 #include "opencv2/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
