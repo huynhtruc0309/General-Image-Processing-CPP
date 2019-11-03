@@ -19,28 +19,31 @@ int main(int argc, char* argv[])
 	argv = temp;
 #pragma endregion
 
-	char* command, *inputPath;
+	char* command, *inputPath, *interpolate, *cmdArguments;
 
 	try
 	{
 		if (argc < 3)
 		{
 			//Print exception
-			return 1;
+			throw "Missing parameter!";
 		}
 
 		command = argv[1];
-		inputPath = argv[2];
 
+		// Command in LAB 1
 		if (strcmp(command, "--rgb2gray") == 0)
 		{
-
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--gray2rgb") == 0)
 		{
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--rgb2hsv") == 0)
 		{
+			inputPath = argv[2];
+
 			Mat input = imread(inputPath, IMREAD_COLOR);
 			Mat output;
 
@@ -60,6 +63,8 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "--hsv2rgb") == 0)
 		{
+			inputPath = argv[2];
+
 			Mat input = imread(inputPath, IMREAD_COLOR);
 			Mat output;
 
@@ -83,6 +88,8 @@ int main(int argc, char* argv[])
 			{
 				throw "Missing parameter!";
 			}
+
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--contrast") == 0)
 		{
@@ -90,15 +97,21 @@ int main(int argc, char* argv[])
 			{
 				throw "Missing parameter!";
 			}
+
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--hist") == 0)
 		{
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--equalhist") == 0)
 		{
+			inputPath = argv[2];
 		}
 		else if (strcmp(command, "--drawhist") == 0)
 		{
+			inputPath = argv[2];
+
 			Mat input = imread(inputPath, IMREAD_COLOR);
 			int isSuccess;
 
@@ -122,9 +135,103 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "--compare") == 0)
 		{
+			inputPath = argv[2];
 		}
-		else
+		//Command in LAB 2
+		else if(strcmp(command, "--zoom") == 0)
 		{
+			if (argc < 5)
+			{
+				throw "Missing parameter!";
+			}
+
+			interpolate = argv[2];
+			inputPath = argv[3];
+			cmdArguments = argv[4];
+		}
+		else if (strcmp(command, "--resize") == 0)
+		{
+			if (argc < 5)
+			{
+				throw "Missing parameter!";
+			}
+
+			interpolate = argv[2];
+			inputPath = argv[3];
+			cmdArguments = argv[4];
+		}
+		else if (strcmp(command, "--rotate") == 0)
+		{
+			if (argc < 5)
+			{
+				throw "Missing parameter!";
+			}
+			
+			interpolate = argv[2];
+			inputPath = argv[3];
+			cmdArguments = argv[4];
+		}
+		else if (strcmp(command, "--rotateN") == 0)
+		{
+			if (argc < 5)
+			{
+				throw "Missing parameter!";
+			}
+			
+			interpolate = argv[2];
+			inputPath = argv[3];
+			cmdArguments = argv[4];
+		}
+		else if (strcmp(command, "--flip") == 0)
+		{
+			if (argc < 5)
+			{
+				throw "Missing parameter!";
+			}
+			
+			interpolate = argv[2];
+			inputPath = argv[3];
+			cmdArguments = argv[4];
+		}
+		//Command in LAB 3
+		else if (strcmp(command, "--mean") == 0)
+		{
+			if (argc < 4)
+			{
+				throw "Missing parameter!";
+			}
+			inputPath = argv[2];
+			cmdArguments = argv[3];
+		}
+		else if (strcmp(command, "--median") == 0)
+		{
+			if (argc < 4)
+			{
+				throw "Missing parameter!";
+			}
+			inputPath = argv[2];
+			cmdArguments = argv[3];
+		}
+		else if (strcmp(command, "--gauss") == 0)
+		{
+			if (argc < 4)
+			{
+				throw "Missing parameter!";
+			}
+			inputPath = argv[2];
+			cmdArguments = argv[3];
+		}
+		else if (strcmp(command, "--sobel") == 0)
+		{
+			inputPath = argv[2];
+		}
+		else if (strcmp(command, "--prewitt") == 0)
+		{
+			inputPath = argv[2];
+		}
+		else if (strcmp(command, "--laplace") == 0)
+		{
+			inputPath = argv[2];
 		}
 	}
 	catch (const char* msg)

@@ -154,13 +154,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Blur.h" />
     <ClInclude Include="ColorTransformer.h" />
     <ClInclude Include="Converter.h" />
+    <ClInclude Include="Convolution.h" />
+    <ClInclude Include="EdgeDetector.h" />
+    <ClInclude Include="GeometricTransformer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Blur.cpp" />
     <ClCompile Include="ColorTransformer.cpp" />
     <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="Convolution.cpp" />
+    <ClCompile Include="EdgeDetector.cpp" />
+    <ClCompile Include="GeometricTransformer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
