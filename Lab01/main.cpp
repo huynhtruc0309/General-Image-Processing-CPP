@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	char* temp[4];
 	temp[0] = _strdup("Lab01.exe");
 	temp[1] = _strdup("--drawhist");
-	temp[2] = _strdup("E:\\test2.png");
+	temp[2] = _strdup("E:\\test1.png");
 	temp[3] = _strdup("commandArgs");
 	argv = temp;
 #pragma endregion
@@ -103,47 +103,21 @@ int main(int argc, char* argv[])
 			int isSuccess;
 
 			ColorTransformer ColorTrans;
-			if (input.channels() == 1)
+			Mat output;
+			isSuccess = ColorTrans.HistogramVisualization(input, output);
+
+			if (isSuccess == 1)
 			{
-				Mat output;
-				isSuccess = ColorTrans.HistogramVisualization(input, output);
+				namedWindow("Source Image", 0);
+				imshow("Source Image", input);
 
-				if (isSuccess == 1)
-				{
-					namedWindow("Source Image", 0);
-					imshow("Source Image", input);
-
-					namedWindow("Histogram Visualization");
-					imshow("Histogram Visualization", output);
-					waitKey(0);
-				}
-				else
-				{
-					throw "Error:..........";
-				}
+				namedWindow("Histogram Visualization");
+				imshow("Histogram Visualization", output);
+				waitKey(0);
 			}
-			else if (input.channels() == 3)
+			else
 			{
-				Mat output_b, output_g, output_r;
-				isSuccess = ColorTrans.HistogramVisualization(input, output_b, output_g, output_r);
-
-
-				if (isSuccess == 1)
-				{
-					namedWindow("Source Image", 0);
-					imshow("Source Image", input);
-
-					imshow("Histogram of blue channel", output_b);
-					imshow("Histogram of green channel", output_g);
-					imshow("Histogram of red channel", output_r);
-
-					cv::waitKey(0);
-					waitKey(0);
-				}
-				else
-				{
-					throw "Error:..........";
-				}
+				throw "Error:..........";
 			}
 		}
 		else if (strcmp(command, "--compare") == 0)

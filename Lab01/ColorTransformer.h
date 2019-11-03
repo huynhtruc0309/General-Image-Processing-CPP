@@ -57,9 +57,6 @@ public:
 	*/
 	int HistogramVisualization(const Mat& sourceImage, Mat& destinationImage);
 
-	int HistogramVisualization(const Mat& sourceImage, Mat& destinationImage_b, Mat& destinationImage_g, Mat& destinationImage_r);
-
-
 	/*
 	Hàm so sánh hai ảnh
 	Tham so :
