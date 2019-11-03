@@ -56,7 +56,6 @@ public:
 		0: Nếu không vẽ được histogram
 	*/
 	int HistogramVisualization(const Mat& sourceImage, Mat& destinationImage);
-
 	/*
 	Hàm so sánh hai ảnh
 	Tham so :

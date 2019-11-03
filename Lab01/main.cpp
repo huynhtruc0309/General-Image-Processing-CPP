@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	char* temp[4];
 	temp[0] = _strdup("Lab01.exe");
 	temp[1] = _strdup("--drawhist");
-	temp[2] = _strdup("E:\\test1.png");
+	temp[2] = _strdup("E:\\test2.png");
 	temp[3] = _strdup("commandArgs");
 	argv = temp;
 #pragma endregion
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 			ColorTransformer ColorTrans;
 			Mat output;
 			isSuccess = ColorTrans.HistogramVisualization(input, output);
-
+			
 			if (isSuccess == 1)
 			{
 				namedWindow("Source Image", 0);

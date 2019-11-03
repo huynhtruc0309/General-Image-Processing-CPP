@@ -23,8 +23,8 @@ int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destin
 
 	vector<Mat> img_rgb;
 
-	int w = 400, h = 400;
-	int sizeHist = 255;
+	int w = 512, h = 400;
+	int sizeHist = 256;
 	split(sourceImage, img_rgb);
 
 	int red, green, blue;
@@ -58,7 +58,7 @@ int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destin
 	normalize(img_g, img_g, 0, histImage.rows, NORM_MINMAX, -1, Mat());
 	normalize(img_r, img_r, 0, histImage.rows, NORM_MINMAX, -1, Mat());
 
-	for (int i = 1; i < 255; i++)
+	for (int i = 1; i < sizeHist; i++)
 	{
 		line(histImage, Point(bin*(i - 1), h - cvRound(img_b.at<float>(i - 1))),
 			Point(bin*(i), h - cvRound(img_b.at<float>(i))),
@@ -75,42 +75,6 @@ int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destin
 
 	cv::waitKey(0);
 	return 1;
-
-	//vector<Mat> img_rgb;
-	//
-	//int w = 400, h = 400;
-	//int size_hist = 255;
-	//float range[] = { 0, 255 };
-	//const float* hist_range = { range };
-
-	//split(sourceImage, img_rgb);
-	//
-	//float histogram[1][256] = { 0 };
-	//for (int x = 0; x < sourceImage.cols; x++)
-	//	for (int y = 0; y < sourceImage.rows; y++)
-	//	{
-	//		// truy xuất đến toạ độ ảnh ở kênh màu R
-	//		int gray = img_rgb[2].at<Vec3b>(y, x)[2];
-	//		histogram[0][gray]++;
-	//	}
-
-	//Mat img_r(256, 1, CV_32F, histogram);
-	//memcpy(img_r.data, histogram, 1 * 256 * sizeof(float));
-	//int bin = cvRound((double)w / size_hist);
-
-	//Mat disp_r(w, h, CV_8UC3, Scalar(255, 255, 255));
-
-	//normalize(img_r, img_r, 0, disp_r.rows, NORM_MINMAX, -1, Mat());
-
-	//for (int i = 1; i < 255; i++)
-	//{
-	//	line(disp_r, Point(bin*(i), h), Point(bin*(i), h - cvRound(img_r.at<float>(i))),
-	//		Scalar(0, 0, 255), 2, 8, 0);
-	//}
-	//destinationImage = disp_r;
-
-	//cv::waitKey(0);
-	//return 1;
 }
 
 float ColorTransformer::CompareImage(const Mat& image1, Mat& image2)
