@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GeometricTransformer.h"
 
 PixelInterpolate::PixelInterpolate()
@@ -23,8 +23,11 @@ BilinearInterpolate::~BilinearInterpolate()
 }
 
 uchar NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels)
-{
-	return uchar();
+{	
+	pSrc += srcWidthStep * (int)round(ty); //Di chuyển con trỏ đến dòng thứ round(ty)
+	pSrc += nChannels * (int)round(tx); //Di chuyển con trỏ đến cột thứ round(tx) 
+	// Kết quả được pixel (round(tx), round(ty))
+	return *pSrc;
 }
 
 NearestNeighborInterpolate::NearestNeighborInterpolate()

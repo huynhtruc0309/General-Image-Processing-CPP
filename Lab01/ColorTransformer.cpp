@@ -18,14 +18,14 @@ int ColorTransformer::HistogramEqualization(const Mat& sourceImage, Mat& destina
 
 int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destinationImage)
 {
-	if (sourceImage.empty())
+	if (sourceImage.empty()) //Kiểm tra hình đâu vào và thoát ra nếu lỗi
 		return 0;
+	
+	vector<Mat> img_rgb; //Vector chứa các ma trận được tách ra theo channel màu
 
-	vector<Mat> img_rgb;
-
-	int w = 512, h = 400;
-	int sizeHist = 256;
-	split(sourceImage, img_rgb);
+	int w = 512, h = 400; //Kích thước khung histogram
+	int sizeHist = 256; //Kích thước của histogram
+	split(sourceImage, img_rgb); //Tách thành các channel
 
 	int red, green, blue;
 	float histogram[3][256] = { 0 };
@@ -43,6 +43,7 @@ int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destin
 			histogram[2][red]++;
 		}
 	
+	//Chuyển mảng histogram vào Mat img_b, img_g, img_r
 	Mat img_b(256, 1, CV_32F, histogram[0]);
 	memcpy(img_b.data, histogram[0], 1 * 256 * sizeof(float));
 	Mat img_g(256, 1, CV_32F, histogram[1]);
@@ -50,9 +51,10 @@ int ColorTransformer::HistogramVisualization(const Mat& sourceImage, Mat& destin
 	Mat img_r(256, 1, CV_32F, histogram[2]);
 	memcpy(img_r.data, histogram[2], 1 * 256 * sizeof(float));
 
+	//Tạo ra một hình để hiện histogram
 	int bin = cvRound((double)w / sizeHist);
-
 	Mat histImage(h, w, CV_8UC3, Scalar(0, 0, 0));
+
 	//Chuẩn hoá giá trị
 	normalize(img_b, img_b, 0, histImage.rows, NORM_MINMAX, -1, Mat());
 	normalize(img_g, img_g, 0, histImage.rows, NORM_MINMAX, -1, Mat());
