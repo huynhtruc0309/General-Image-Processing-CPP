@@ -3,6 +3,32 @@
 
 int ColorTransformer::ChangeBrighness(const Mat& sourceImage, Mat& destinationImage, short b)
 {
+	int cols = sourceImage.cols;
+	int rows = sourceImage.rows;
+
+
+	destinationImage = sourceImage.clone();
+
+	for (int i = 0; i < rows; i++)
+	{
+		const uchar* src = sourceImage.ptr<uchar>(i);
+		uchar* res = destinationImage.ptr<uchar>(i);
+
+		for (int j = 0; j < cols; j++, src++, res++)
+		{
+			float blue = src[0] + b;
+			float green = src[1] + b;
+			float red = src[2] + b;
+
+			blue = blue < 255 ? blue : 255;
+			green = green < 255 ? green : 255;
+			red = red < 255 ? red : 255;
+
+			res[0] = (uchar)blue;
+			res[1] = (uchar)green;
+			res[2] = (uchar)red;
+		}
+	}
 	return 0;
 }
 

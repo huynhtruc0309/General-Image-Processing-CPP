@@ -1,13 +1,54 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Converter.h"
 
 int Converter::RGB2GrayScale(const Mat& sourceImage, Mat& destinationImage)
 {
+	if (sourceImage.type() == CV_8UC1)
+	{
+		destinationImage = sourceImage;
+		return 0;
+	}
+	if (sourceImage.type() != CV_8UC3)
+		return 1;
+
+	int rows = sourceImage.rows;
+	int cols = sourceImage.cols;
+
+	destinationImage.create(sourceImage.size(), CV_8UC1); // tạo ảnh dich mới với kích thước bằng ảnh cũ
+
+	for (int i = 0; i < rows; i++)
+	{
+		const uchar* src = sourceImage.ptr<uchar>(i); // trả về con trỏ mảng
+		uchar* res = destinationImage.ptr<uchar>(i);
+
+		for (int j = 0; j < cols; j++, src += 3)
+		{
+			//res =  0.299⋅R+0.587⋅G+0.114⋅B
+			res[j] = (uchar)(src[0] * 0.114f + src[1] * 0.587f + src[2] * 0.299f);
+		}
+	}
 	return 0;
 }
 
 int Converter::GrayScale2RGB(const Mat& sourceImage, Mat& destinationImage)
 {
+	int rows = sourceImage.rows;
+	int cols = sourceImage.cols;
+
+	destinationImage.create(sourceImage.size(), CV_8UC3);
+
+	for (int i = 0; i < rows; i++)
+	{
+		const uchar* src = sourceImage.ptr<uchar>(i);
+		uchar* res = destinationImage.ptr<uchar>(i);
+
+		for (int j = 0; j < cols; j++, res += 3)
+		{
+			res[0] = (uchar)(src[j]);
+			res[1] = (uchar)(src[j]);
+			res[2] = (uchar)(src[j]);
+		}
+	}
 	return 0;
 }
 void rgb2hsv(float r, float g, float b, float & h, float & s, float & v)
