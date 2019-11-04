@@ -8,7 +8,30 @@ int ColorTransformer::ChangeBrighness(const Mat& sourceImage, Mat& destinationIm
 
 int ColorTransformer::ChangeContrast(const Mat& sourceImage, Mat& destinationImage, float c)
 {
-	return 0;
+	if (!sourceImage.data) {
+		return 0;
+	}
+	destinationImage.create(sourceImage.size(), sourceImage.type());
+	float r, g, b;
+	int rows = sourceImage.rows;
+	int cols = sourceImage.cols;
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			b = (float)sourceImage.at<cv::Vec3b>(i, j)[0] * c;
+			g = (float)sourceImage.at<cv::Vec3b>(i, j)[1] * c;
+			r = (float)sourceImage.at<cv::Vec3b>(i, j)[2] * c;
+			b = (b > 255) ? 255 : b;
+			g = (g > 255) ? 255 : g;
+			r = (r > 255) ? 255 : r;
+			destinationImage.at<cv::Vec3b>(i, j)[0] = (uchar)b;
+			destinationImage.at<cv::Vec3b>(i, j)[1] = (uchar)g;
+			destinationImage.at<cv::Vec3b>(i, j)[2] = (uchar)r;
+		}
+	}
+
+	return 1;
 }
 
 int ColorTransformer::HistogramEqualization(const Mat& sourceImage, Mat& destinationImage)
