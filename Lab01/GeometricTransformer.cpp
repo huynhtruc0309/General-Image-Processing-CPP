@@ -11,22 +11,13 @@ PixelInterpolate::~PixelInterpolate()
 
 //Lớp nội suy màu theo phương pháp song tuyến tính
 
-void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar *pDst)
+uchar BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, int xChannel)
 {
-	//uchar *pDst;
-	int l = round(tx), r = round(ty);
-	float a = tx - l, b = ty - r;
-	
-	uchar * pSrcRow0 = pSrc + (l * srcWidthStep + r * nChannels);				// f(l, r)  
-	uchar * pSrcRow1 = pSrc + ((l + 1) * srcWidthStep + r * nChannels);			// f(l + 1, r)
-	uchar * pSrcRow2 = pSrc + (l * srcWidthStep + (r + 1) * nChannels);			// f (l, r + 1)
-	uchar * pSrcRow3 = pSrc + ((l + 1) * srcWidthStep + (r + 1) * nChannels);	// f(l + 1, r + 1)
-	
-	// r, g, b interpolation
-	for (int i = 0; i < nChannels; i++)
-		pDst[i] = saturate_cast<uchar>((1 - a)*(1 - b)*pSrcRow0[i] + a * (1 - b)*pSrcRow1[i] + b * (1 - a)*pSrcRow2[i] + a * b*pSrcRow3[i]);
-	
-	//return *pDst;
+	int l = (int)round(tx), k = (int)round(ty);
+	int a = abs(l - tx), b = abs(ty - k);
+
+	return (1 - a)*(1 - b)*(int)pSrc[srcWidthStep * k + nChannels * l + xChannel] + a * (1 - b) *pSrc[srcWidthStep * k + nChannels * (l + 1) + xChannel]
+		+ b * (1 - a)*pSrc[srcWidthStep * (k + 1) + nChannels * l + xChannel] + a * b*pSrc[srcWidthStep * (k + 1) + nChannels * (l + 1) + xChannel];
 }
 
 BilinearInterpolate::BilinearInterpolate()
@@ -41,16 +32,9 @@ BilinearInterpolate::~BilinearInterpolate()
 Lớp nội suy màu theo phương pháp láng giềng gần nhất
 */
 
-void NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar *pDst)
+uchar NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, int xChannel)
 {	
-	//uchar *pDst;
-	int x = (int)tx, y = (int)ty;
-	uchar * pSrcRow = pSrc + (x * srcWidthStep + y * nChannels);
-
-	for (int i = 0; i < nChannels; i++)
-		pDst[i] = pSrcRow[i];
-	
-	//return *pDst;
+	return pSrc[srcWidthStep * (int)round(ty) + nChannels * (int)round(tx) + xChannel];
 }
 
 NearestNeighborInterpolate::NearestNeighborInterpolate()
@@ -136,7 +120,6 @@ int GeometricTransformer::Transform(const Mat & beforeImage, Mat & afterImage, A
 		}
 			
 	}
-
 	return 1;
 }
 

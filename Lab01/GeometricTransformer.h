@@ -16,12 +16,12 @@ public:
 		- pSrc: con trỏ ảnh gốc
 		- srcWidthStep: widthstep của ảnh gốc
 		- nChannels: số kênh màu của ảnh gốc
-		- pDst : con trỏ ảnh đích đến pixel
+		- xChannel: kênh màu cần xác định
 	Trả về
 		- Giá trị màu được nội suy
 	*/
-	virtual void Interpolate(
-		float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst) = 0;
+	virtual uchar Interpolate(
+		float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, int xChannel) = 0;
 	PixelInterpolate();
 	~PixelInterpolate();
 };
@@ -32,7 +32,7 @@ Lớp nội suy màu theo phương pháp song tuyến tính
 class BilinearInterpolate : public PixelInterpolate
 {
 public:
-	void Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst);
+	uchar Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, int xChannel);
 	BilinearInterpolate();
 	~BilinearInterpolate();
 };
@@ -43,7 +43,7 @@ Lớp nội suy màu theo phương pháp láng giềng gần nhất
 class NearestNeighborInterpolate : public PixelInterpolate
 {
 public:
-	void Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst);
+	uchar Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, int xChannel);
 	NearestNeighborInterpolate();
 	~NearestNeighborInterpolate();
 };
