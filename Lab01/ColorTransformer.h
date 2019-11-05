@@ -34,6 +34,16 @@ public:
 	*/
 	int ChangeContrast(const Mat& sourceImage, Mat& destinationImage, float c);
 
+	/*
+	Hàm tính lược đồ màu tổng quát cho ảnh bất kỳ
+	Tham so :
+		sourceImage : ảnh ban đầu
+		histMatrix : ma trận histogram (nChannels x 256), mỗi dòng là 1 mảng 256 phần tử histogram của từng kênh màu
+	Hàm trả về:
+		1: Nếu thành công thì trả về matrix kết quả (ảnh gốc vẫn giữ nguyên giá trị)
+		0: Nếu không tính được histogram hoặc ảnh input không tồn tại
+	*/
+	int CalcHistogram(const Mat& sourceImage, Mat& histMatrix);
 
 	/*
 	Hàm cân bằng lược đồ màu tổng quát cho ảnh bất kỳ
@@ -49,13 +59,15 @@ public:
 	/*
 	Hàm vẽ lược đồ màu tổng quát cho ảnh bất kỳ
 	Tham so :
-		image : ảnh dùng để tính histogram
-		histImage : ảnh histogram
+		histMatrix : ma trận histogram đã tính được
+		histImage : ảnh histogram được vẽ
 	Hàm trả về:
 		1: Nếu thành công vẽ được histogram
 		0: Nếu không vẽ được histogram
 	*/
-	int HistogramVisualization(const Mat& sourceImage, Mat& destinationImage);
+	int DrawHistogram(const Mat& histMatrix, Mat& histImage);
+	//int HistogramVisualization(const Mat& sourceImage, Mat& destinationImage);
+
 	/*
 	Hàm so sánh hai ảnh
 	Tham so :

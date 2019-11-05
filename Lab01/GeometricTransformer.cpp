@@ -87,39 +87,39 @@ AffineTransform::~AffineTransform()
 
 int GeometricTransformer::Transform(const Mat & beforeImage, Mat & afterImage, AffineTransform * transformer, PixelInterpolate * interpolator)
 {
-	if (beforeImage.empty())
-		return 0;
+	//if (beforeImage.empty())
+	//	return 0;
 
 	//w_src : chiều rộng ảnh nguồn, h_src : chiều cao ảnh nguồn
 	//w_dst : chiều rộng ảnh đích, h_dst : chiều cao ảnh đích
-	int w_src = beforeImage.cols, h_src = beforeImage.rows;
-	int w_dst = afterImage.cols, h_dst = afterImage.rows;
+	//int w_src = beforeImage.cols, h_src = beforeImage.rows;
+	//int w_dst = afterImage.cols, h_dst = afterImage.rows;
 
-	int nChannels = beforeImage.channels(); // 
+	//int nChannels = beforeImage.channels(); // 
 
 	// khoang cach giữa 2 px cùng cột 2 dong liên tiếp
-	int w_srcStep = beforeImage.step[0];
-	int w_dstStep = afterImage.step[0];
+	//int w_srcStep = beforeImage.step[0];
+	//int w_dstStep = afterImage.step[0];
 
-	uchar* res = (uchar*)afterImage.data;
-	uchar* src = (uchar*)beforeImage.data;
+	//uchar* res = (uchar*)afterImage.data;
+	//uchar* src = (uchar*)beforeImage.data;
 
-	for (int i = 0; i < h_dst; i++, res += w_srcStep)
-	{
-		
-		uchar* pRes = res; // con tro dong anh dich
+	//for (int i = 0; i < h_dst; i++, res += w_srcStep)
+	//{
+	//	
+	//	uchar* pRes = res; // con tro dong anh dich
 
-		for (int j = 0; j < w_dst; j++, pRes += nChannels)
-		{
-			float x = i;
-			float y = j;
-			transformer->TransformPoint(x, y);
+	//	for (int j = 0; j < w_dst; j++, pRes += nChannels)
+	//	{
+	//		float x = i;
+	//		float y = j;
+	//		transformer->TransformPoint(x, y);
 
-			if (round(x) < h_src && round(y) < w_src)
-				interpolator->Interpolate(x, y, src, w_srcStep, nChannels, pRes);
-		}
-			
-	}
+	//		if (round(x) < h_src && round(y) < w_src)
+	//			interpolator->Interpolate(x, y, src, w_srcStep, nChannels, pRes);
+	//	}
+	//		
+	//}
 	return 1;
 }
 

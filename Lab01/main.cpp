@@ -116,9 +116,12 @@ int main(int argc, char* argv[])
 			int isSuccess;
 
 			ColorTransformer ColorTrans;
-			Mat output;
-			isSuccess = ColorTrans.HistogramVisualization(input, output);
-			
+			Mat hist, output;
+			isSuccess = ColorTrans.CalcHistogram(input, hist);
+
+			if (isSuccess == 1)
+				isSuccess = ColorTrans.DrawHistogram(hist, output);
+
 			if (isSuccess == 1)
 			{
 				namedWindow("Source Image", 0);

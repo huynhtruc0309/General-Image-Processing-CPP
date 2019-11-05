@@ -24,7 +24,7 @@ int EdgeDetector::DetectEdge(const Mat & sourceImage, Mat & destinationImage, in
 						  1/3, 1/3, 1/3 };
 	conv.SetKernel(Wy, 3, 3);
 	
-	int calCov = conv.DoConvolution(sourceImage, fy);
+	calCov = conv.DoConvolution(sourceImage, fy);
 
 	if (calCov == 0)
 		return 0;
