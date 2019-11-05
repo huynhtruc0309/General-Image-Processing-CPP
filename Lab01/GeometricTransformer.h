@@ -16,6 +16,7 @@ public:
 		- pSrc: con trỏ ảnh gốc
 		- srcWidthStep: widthstep của ảnh gốc
 		- nChannels: số kênh màu của ảnh gốc
+		- pDst : con trỏ ảnh đích đến pixel
 	Trả về
 		- Giá trị màu được nội suy
 	*/
