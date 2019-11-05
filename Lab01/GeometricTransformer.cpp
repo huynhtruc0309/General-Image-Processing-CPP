@@ -11,9 +11,9 @@ PixelInterpolate::~PixelInterpolate()
 
 //Lớp nội suy màu theo phương pháp song tuyến tính
 
-uchar BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels)
+void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar *pDst)
 {
-	uchar *pDst;
+	//uchar *pDst;
 	int l = round(tx), r = round(ty);
 	float a = tx - l, b = ty - r;
 	
@@ -26,7 +26,7 @@ uchar BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int src
 	for (int i = 0; i < nChannels; i++)
 		pDst[i] = saturate_cast<uchar>((1 - a)*(1 - b)*pSrcRow0[i] + a * (1 - b)*pSrcRow1[i] + b * (1 - a)*pSrcRow2[i] + a * b*pSrcRow3[i]);
 	
-	return *pDst;
+	//return *pDst;
 }
 
 BilinearInterpolate::BilinearInterpolate()
@@ -41,16 +41,16 @@ BilinearInterpolate::~BilinearInterpolate()
 Lớp nội suy màu theo phương pháp láng giềng gần nhất
 */
 
-uchar NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels)
+void NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar *pDst)
 {	
-	uchar *pDst;
+	//uchar *pDst;
 	int x = (int)tx, y = (int)ty;
 	uchar * pSrcRow = pSrc + (x * srcWidthStep + y * nChannels);
 
 	for (int i = 0; i < nChannels; i++)
 		pDst[i] = pSrcRow[i];
 	
-	return *pDst;
+	//return *pDst;
 }
 
 NearestNeighborInterpolate::NearestNeighborInterpolate()
@@ -132,7 +132,7 @@ int GeometricTransformer::Transform(const Mat & beforeImage, Mat & afterImage, A
 			transformer->TransformPoint(x, y);
 
 			if (round(x) < h_src && round(y) < w_src)
-				pRes[j] = interpolator->Interpolate(x, y, src, w_srcStep, nChannels);
+				interpolator->Interpolate(x, y, src, w_srcStep, nChannels, pRes);
 		}
 			
 	}

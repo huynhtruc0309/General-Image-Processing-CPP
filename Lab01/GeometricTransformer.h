@@ -19,8 +19,8 @@ public:
 	Trả về
 		- Giá trị màu được nội suy
 	*/
-	virtual uchar Interpolate(
-		float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels) = 0;
+	virtual void Interpolate(
+		float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst) = 0;
 	PixelInterpolate();
 	~PixelInterpolate();
 };
@@ -31,7 +31,7 @@ Lớp nội suy màu theo phương pháp song tuyến tính
 class BilinearInterpolate : public PixelInterpolate
 {
 public:
-	uchar Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels);
+	void Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst);
 	BilinearInterpolate();
 	~BilinearInterpolate();
 };
@@ -42,7 +42,7 @@ Lớp nội suy màu theo phương pháp láng giềng gần nhất
 class NearestNeighborInterpolate : public PixelInterpolate
 {
 public:
-	uchar Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels);
+	void Interpolate(float tx, float ty, uchar* pSrc, int srcWidthStep, int nChannels, uchar *pDst);
 	NearestNeighborInterpolate();
 	~NearestNeighborInterpolate();
 };
