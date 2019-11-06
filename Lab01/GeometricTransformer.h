@@ -145,7 +145,35 @@ public:
 		Mat &dstImage,
 		float sx, float sy,
 		PixelInterpolate* interpolator);
+/*
+	Hàm thay đổi kích thước ảnh
+	Tham số
+	- srcImage: ảnh input
+	- dstImage: ảnh sau khi thay đổi kích thước
+	- newWidth, newHeight: kích thước mới
+	- interpolator: biến chỉ định phương pháp nội suy màu
+	Trả về:
+	- 0: Nếu ảnh input ko tồn tại hay ko thực hiện được phép biến đổi
+	- 1: Nếu biến đổi thành công
+	*/
+	int Resize(const Mat &srcImage,	Mat &dstImage,int newWidth, int newHeight, PixelInterpolate* interpolator);
 
+	/*
+	Hàm lấy đối xứng ảnh
+	Tham số
+	- srcImage: ảnh input
+	- dstImage: ảnh sau khi lấy đối xứng
+	- direction = 1 nếu lấy đối xứng theo trục ngang và direction = 0 nếu lấy đối xứng theo trục đứng
+	- interpolator: biến chỉ định phương pháp nội suy màu
+	Trả về:
+	- 0: Nếu ảnh input ko tồn tại hay ko thực hiện được phép biến đổi
+	- 1: Nếu biến đổi thành công
+	*/
+	int Flip(
+		const Mat &srcImage,
+		Mat &dstImage,
+		bool direction,
+		PixelInterpolate* interpolator);
 	GeometricTransformer();
 	~GeometricTransformer();
 };
