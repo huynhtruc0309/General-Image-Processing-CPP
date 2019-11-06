@@ -131,9 +131,41 @@ int ColorTransformer::DrawHistogram(const Mat& histMatrix, Mat& histImage)
 	return 1;
 }
 
+int CalcHistToCmp(const Mat& sourceImage, Mat& histMatrix)
+{
+	if (sourceImage.empty())
+		return 0;
+	int size[] = { 256,256,256};
+	histMatrix = Mat(3, size, CV_32F, cv::Scalar(0));
+	for (int i=0;i<sourceImage.rows;i++)
+		for (int j = 0; j < sourceImage.cols; j++)
+		{
+			Vec3b bgr = sourceImage.at <Vec3b>(i, j);
+			histMatrix.at<float>(bgr[0], bgr[1], bgr[2]) += 1;
+		}
+	return 1;
+}
+
 float ColorTransformer::CompareImage(const Mat& image1, Mat& image2)
 {
-	return 0.0f;
+	Mat hist1, hist2;
+	CalcHistToCmp(image1, hist1);
+	normalize(hist1, hist1, 0, 1, NORM_MINMAX, -1, Mat());
+	CalcHistToCmp(image2, hist2);
+	normalize(hist2, hist2, 0, 1, NORM_MINMAX, -1, Mat());
+	float res = 0.0f;
+
+	for (int i = 0; i < 256; i++)
+		for (int j = 0; j < 256; j++)
+			for (int k = 0; k < 256; k++)
+			{
+				float ai = hist1.at<float>(i, j, k);
+				float bi = hist2.at<float>(i, j, k);
+				if (ai != 0)
+					res += (ai - bi) * (ai - bi) / ai;
+			}
+
+	return res;
 }
 
 ColorTransformer::ColorTransformer()
