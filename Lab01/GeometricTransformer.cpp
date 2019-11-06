@@ -162,12 +162,49 @@ int GeometricTransformer::RotateUnkeepImage(const Mat & srcImage, Mat & dstImage
 
 int GeometricTransformer::Scale(const Mat & srcImage, Mat & dstImage, float sx, float sy, PixelInterpolate * interpolator)
 {
+	if (!srcImage.data) return 0;
 	AffineTransform * affineTf = new AffineTransform();
-	affineTf->Scale(1.0f / sx, 1.0f / sy);
+	affineTf->Scale(1.0f /sx,1.0f/ sy);
 
 	dstImage.create(round(srcImage.rows * sx), round(srcImage.cols * sy), srcImage.type()); // khởi tạo ảnh đích
 	int res = Transform(srcImage, dstImage, affineTf, interpolator);
 	return res;
+}
+
+int GeometricTransformer::Resize(const Mat & srcImage, Mat & dstImage, int newWidth, int newHeight, PixelInterpolate * interpolator)
+{
+	if (!srcImage.data) return 0;
+	AffineTransform * affineTf = new AffineTransform();
+	float sx =((float)newWidth / (float)srcImage.rows)  , sy = ((float)newHeight / (float)srcImage.cols);
+	affineTf->Scale(1.0f / sx , 1.0f / sy);
+
+	dstImage.create(newWidth, newHeight, srcImage.type()); // khởi tạo ảnh đích
+	int res = Transform(srcImage, dstImage, affineTf, interpolator);
+	return res;
+}
+
+int GeometricTransformer::Flip(const Mat & srcImage, Mat & dstImage, bool direction, PixelInterpolate * interpolator)
+{
+	if (!srcImage.data) return 0;
+	int row = srcImage.rows, col = srcImage.cols;
+	dstImage.create(row, col, srcImage.type());
+	int k;
+	if (direction == 0) {
+		for (int i = 0; i < row; i++)
+			for (int j = 0, k = col - 1; j <= k; j++, k--) {
+				dstImage.at<cv::Vec3b>(i, j) = srcImage.at<cv::Vec3b>(i, k);
+				dstImage.at<cv::Vec3b>(i, k) = srcImage.at<cv::Vec3b>(i, j);
+			}
+	}
+	else
+	{
+		for (int i = 0; i < col; i++)
+			for (int j = 0, k = row - 1; j <= k; j++, k--) {
+				dstImage.at<cv::Vec3b>(j, i) = srcImage.at<cv::Vec3b>(k, i);
+				dstImage.at<cv::Vec3b>(k, i) = srcImage.at<cv::Vec3b>(j, i);
+			}
+	}
+	return 1;
 }
 
 GeometricTransformer::GeometricTransformer()
