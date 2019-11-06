@@ -47,26 +47,17 @@ NearestNeighborInterpolate::~NearestNeighborInterpolate()
 
 void AffineTransform::Translate(float dx, float dy)
 {
-	float matrix[3][3] = { {1, 0 , dx},
-						   {0, 1, dy},
-						   {0, 0, 1} };
-	this->_matrixTransform = Mat(3, 3, CV_32F, matrix);
+	this->_matrixTransform = (Mat_<float>(3, 3) << 1, 0, dx, 0, 1, dy, 0, 0, 1);
 }
 
 void AffineTransform::Rotate(float angle)
 {
-	float matrix[3][3] = { {cos(angle), -sin(angle) , 0},
-						   {sin(angle), cos(angle), 0},
-						   {0, 0, 1} };
-	this->_matrixTransform = Mat(3, 3, CV_32F, matrix);
+	this->_matrixTransform = (Mat_<float>(3, 3) << cos(angle), -sin(angle), 0, sin(angle), cos(angle), 0, 0, 0, 1);
 }
 
 void AffineTransform::Scale(float sx, float sy)
 {
-	float matrix[3][3] = { {sx, 0 , 0},
-						   {0, sy, 0},
-						   {0, 0, 1} };
-	this->_matrixTransform = Mat(3, 3, CV_32F, matrix);
+	this->_matrixTransform = (Mat_<float>(3, 3) << sx, 0, 0, 0, sy, 0, 0, 0, 1);
 }
 
 void AffineTransform::TransformPoint(float & x, float & y)
@@ -77,8 +68,8 @@ void AffineTransform::TransformPoint(float & x, float & y)
 
 AffineTransform::AffineTransform()
 {
-	float matrix[3][3] = { 0 };
-	this->_matrixTransform = Mat(3, 3, CV_32F, matrix);
+	//Ma trận đơn vị
+	this->_matrixTransform = (Mat_<float>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
 }
 
 AffineTransform::~AffineTransform()
