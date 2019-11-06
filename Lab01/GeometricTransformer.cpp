@@ -1,5 +1,5 @@
-﻿#include "pch.h"
 #include "GeometricTransformer.h"
+
 
 PixelInterpolate::PixelInterpolate()
 {
@@ -9,15 +9,18 @@ PixelInterpolate::~PixelInterpolate()
 {
 }
 
-//Lớp nội suy màu theo phương pháp song tuyến tính
+//Các hàm của lớp BilinearInterpolate
 
-uchar BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, int xChannel)
+void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDstRow)
 {
-	int l = (int)round(tx), k = (int)round(ty);
-	int a = abs(l - tx), b = abs(ty - k);
-
-	return (1 - a)*(1 - b)*(int)pSrc[srcWidthStep * k + nChannels * l + xChannel] + a * (1 - b) *pSrc[srcWidthStep * k + nChannels * (l + 1) + xChannel]
-		+ b * (1 - a)*pSrc[srcWidthStep * (k + 1) + nChannels * l + xChannel] + a * b*pSrc[srcWidthStep * (k + 1) + nChannels * (l + 1) + xChannel];
+	int l = round(tx), r = round(ty);
+	float a = tx - l, b = ty - r;
+	uchar * pSrcRow0 = pSrc + (l * srcWidthStep + r * nChannels); // f(l, r)
+	uchar * pSrcRow1 = pSrc + ((l + 1) * srcWidthStep + r * nChannels); // f(l + 1, r)
+	uchar * pSrcRow2 = pSrc + (l * srcWidthStep + (r + 1) * nChannels); // f (l, r + 1)
+	uchar * pSrcRow3 = pSrc + ((l + 1) * srcWidthStep + (r + 1) * nChannels); // f(l + 1, r + 1)
+	for (int i = 0; i < nChannels; i++)
+		pDstRow[i] = saturate_cast<uchar>((1 - a)*(1 - b)*pSrcRow0[i] + a * (1 - b)*pSrcRow1[i] + b * (1 - a)*pSrcRow2[i] + a * b*pSrcRow3[i]);
 }
 
 BilinearInterpolate::BilinearInterpolate()
@@ -28,13 +31,15 @@ BilinearInterpolate::~BilinearInterpolate()
 {
 }
 
-/*
-Lớp nội suy màu theo phương pháp láng giềng gần nhất
-*/
+//Các hàm của lớp NearestNeighborInterpolate
 
-uchar NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, int xChannel)
-{	
-	return pSrc[srcWidthStep * (int)round(ty) + nChannels * (int)round(tx) + xChannel];
+void NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDstRow)
+{
+	int x = (int)tx, y = (int)ty;
+	uchar * pSrcRow = pSrc + (x * srcWidthStep + y * nChannels);
+
+	for (int i = 0; i < nChannels; i++)
+		pDstRow[i] = pSrcRow[i];
 }
 
 NearestNeighborInterpolate::NearestNeighborInterpolate()
@@ -45,99 +50,124 @@ NearestNeighborInterpolate::~NearestNeighborInterpolate()
 {
 }
 
+//Các hàm của lớp AffineTransform
+
 void AffineTransform::Translate(float dx, float dy)
 {
-	this->_matrixTransform = (Mat_<float>(3, 3) << 1, 0, dx, 0, 1, dy, 0, 0, 1);
+	float matrix[3][3] = { { 1, 0 , dx },
+	{ 0, 1, dy },
+	{ 0, 0, 1 } };
+	this->_matrixTransform = Mat(3, 3, CV_32F, matrix)*_matrixTransform;
+
 }
 
 void AffineTransform::Rotate(float angle)
 {
-	this->_matrixTransform = (Mat_<float>(3, 3) << cos(angle), -sin(angle), 0, sin(angle), cos(angle), 0, 0, 0, 1);
+	angle = angle*M_PI / 180;
+	float matrix[3][3] = { { cos(angle), -sin(angle) , 0 },
+	{ sin(angle), cos(angle), 0 },
+	{ 0, 0, 1 } };
+	this->_matrixTransform = Mat(3, 3, CV_32FC1, matrix)*_matrixTransform;
+
 }
 
 void AffineTransform::Scale(float sx, float sy)
 {
-	this->_matrixTransform = (Mat_<float>(3, 3) << sx, 0, 0, 0, sy, 0, 0, 0, 1);
+	
+	float matrix[3][3] = { { sx, 0 , 0 },
+	{ 0, sy, 0 },
+	{ 0, 0, 1 } };
+	this->_matrixTransform = Mat(3, 3, CV_32FC1, matrix)*_matrixTransform;
 }
 
 void AffineTransform::TransformPoint(float & x, float & y)
 {
 	x = this->_matrixTransform.at<float>(0, 0)*x + this->_matrixTransform.at<float>(0, 1)*y + this->_matrixTransform.at<float>(0, 2);
 	y = this->_matrixTransform.at<float>(1, 0)*x + this->_matrixTransform.at<float>(1, 1)*y + this->_matrixTransform.at<float>(1, 2);
+
 }
 
 AffineTransform::AffineTransform()
 {
-	//Ma trận đơn vị
-	this->_matrixTransform = (Mat_<float>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
+	_matrixTransform.create(3, 3, CV_32FC1);
+
+	float matrix[3][3] = { { 1, 0 , 0 },
+	{ 0, 1, 0 },
+	{ 0, 0, 1 } };
+
+	for (int y = 0; y < 3; y++)
+		for (int x = 0; x < 3; x++)
+			_matrixTransform.at<float>(x, y) = matrix[x][y];
+	
+
 }
 
 AffineTransform::~AffineTransform()
 {
 }
 
+
+//Các hàm của lớp GeometricTransformer
+
 int GeometricTransformer::Transform(const Mat & beforeImage, Mat & afterImage, AffineTransform * transformer, PixelInterpolate * interpolator)
 {
-	//if (beforeImage.empty())
-	//	return 0;
+	if (beforeImage.empty())
+		return 0;
 
 	//w_src : chiều rộng ảnh nguồn, h_src : chiều cao ảnh nguồn
 	//w_dst : chiều rộng ảnh đích, h_dst : chiều cao ảnh đích
-	//int w_src = beforeImage.cols, h_src = beforeImage.rows;
-	//int w_dst = afterImage.cols, h_dst = afterImage.rows;
+	int w_src = beforeImage.cols, h_src = beforeImage.rows;
+	int w_dst = afterImage.cols, h_dst = afterImage.rows;
 
-	//int nChannels = beforeImage.channels(); // 
+	int nChannels = beforeImage.channels(); // 
 
 	// khoang cach giữa 2 px cùng cột 2 dong liên tiếp
-	//int w_srcStep = beforeImage.step[0];
-	//int w_dstStep = afterImage.step[0];
+	int w_srcStep = beforeImage.step[0];
+	int w_dstStep = afterImage.step[0];
 
-	//uchar* res = (uchar*)afterImage.data;
-	//uchar* src = (uchar*)beforeImage.data;
+	uchar* res = (uchar*)afterImage.data;
+	uchar* src = (uchar*)beforeImage.data;
+	float x, y;
+	for (int i = 0; i < h_dst; i++, res += w_dstStep)
+	{
 
-	//for (int i = 0; i < h_dst; i++, res += w_srcStep)
-	//{
-	//	
-	//	uchar* pRes = res; // con tro dong anh dich
+		uchar* pRes = res; // con tro dong anh dich
 
-	//	for (int j = 0; j < w_dst; j++, pRes += nChannels)
-	//	{
-	//		float x = i;
-	//		float y = j;
-	//		transformer->TransformPoint(x, y);
+		for (int j = 0; j < w_dst; j++, pRes += nChannels)
+		{
+			x = i;
+			y = j;
+			transformer->TransformPoint(x, y);
 
-	//		if (round(x) < h_src && round(y) < w_src)
-	//			interpolator->Interpolate(x, y, src, w_srcStep, nChannels, pRes);
-	//	}
-	//		
-	//}
+			if (round(x) < h_src && round(y) < w_src&& round(x) >= 0 && round(y) >= 0)
+				interpolator->Interpolate(x, y, src, w_srcStep, nChannels, pRes);
+		}
+
+	}
+
 	return 1;
 }
 
 int GeometricTransformer::RotateKeepImage(const Mat & srcImage, Mat & dstImage, float angle, PixelInterpolate * interpolator)
 {
 
-	return 0;
+	return 1;
 }
 
 int GeometricTransformer::RotateUnkeepImage(const Mat & srcImage, Mat & dstImage, float angle, PixelInterpolate * interpolator)
 {
-	return 0;
+	
+	return 1;
 }
 
 int GeometricTransformer::Scale(const Mat & srcImage, Mat & dstImage, float sx, float sy, PixelInterpolate * interpolator)
 {
-	return 0;
-}
+	AffineTransform * affineTf = new AffineTransform();
+	affineTf->Scale(1.0f / sx, 1.0f / sy);
 
-int GeometricTransformer::Resize(const Mat & srcImage, Mat & dstImage, int newWidth, int newHeight, PixelInterpolate * interpolator)
-{
-	return 0;
-}
-
-int GeometricTransformer::Flip(const Mat & srcImage, Mat & dstImage, bool direction, PixelInterpolate * interpolator)
-{
-	return 0;
+	dstImage.create(round(srcImage.rows * sx), round(srcImage.cols * sy), srcImage.type()); // khởi tạo ảnh đích
+	int res = Transform(srcImage, dstImage, affineTf, interpolator);
+	return res;
 }
 
 GeometricTransformer::GeometricTransformer()
@@ -147,3 +177,23 @@ GeometricTransformer::GeometricTransformer()
 GeometricTransformer::~GeometricTransformer()
 {
 }
+
+// test
+//int main()
+//{
+//	Mat srcImg, dstImg;
+//	GeometricTransformer ggg;
+//	PixelInterpolate *pixInterpolate;
+//	srcImg = imread("test.jpg", CV_LOAD_IMAGE_COLOR);
+//float fX = 1.5; 
+//float fY = 1.5; 
+//pixInterpolate = new BilinearInterpolate();
+//result = GTf.Scale(srcImg, dstImg, fX, fY, pixInterpolate);
+//
+//	imshow("Source Image", srcImg);
+//	imshow("Destination Image", dstImg);
+//
+//
+//	waitKey(0);
+//	return 0;
+//}
