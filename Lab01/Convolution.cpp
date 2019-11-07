@@ -8,43 +8,48 @@ vector<float> Convolution::GetKernel()
 
 void Convolution::SetKernel(vector<float> kernel, int kWidth, int kHeight)
 {
-	this->_kernel = kernel;
-	this->_kernelHeight = kHeight;
 	this->_kernelWidth = kWidth;
+	this->_kernelHeight = kHeight;
+	copy(kernel.begin(), kernel.end(), back_inserter(this->_kernel));
 }
 
 int Convolution::DoConvolution(const Mat & sourceImage, Mat & destinationImage)
 {
-	//int height = sourceImage.row, width = sourceImage.col;
-	//int nChannel = sourceImage.channels();
+	int rows = sourceImage.rows;
+	int cols = sourceImage.cols;
+	int iStart = -_kernelWidth / 2;
+	int jStart = -_kernelHeight / 2;
 
-	//int row = this->_kernelWidth, col = this->_kernelHeight;
+	Mat res(rows, cols, CV_32F);
 
-	//for (int y = 0; y < height; y++)
-	//{
-	//	lấy con trỏ đầu mỗi dòng
-	//	uchar* desRow = (uchar*)destinationImage.ptr<uchar>(y);
+	for (int x = 0; x < cols; x++)
+	{
+		for (int y = 0; y < rows; y++)
+		{
+			float val = 0;
+			for (int k = 0; k < _kernel.size(); k++)
+			{
+				int i = iStart + k % _kernelWidth;
+				int j = jStart + k / _kernelWidth;
+				int r = y - j;
+				int c = x - i;
 
-	//	for (int x = 0; x < width; x++, desRow+= nChannel)
-	//	{
-	//		truy xuất đến toạ độ (x,y) của 1 pixel
-	//		for (int i = 0; i < row; i++)
-	//		{
-	//			for (int j = 0; j < height; j++)
-	//			{
-	//				desRow[0] += srcRow[0];//truy xuất pixel (x,y) channel thứ 0
-	//				desRow[1] = ...;//truy xuất pixel (x,y) channel thứ 1
-	//				desRow[2] = ...;//truy xuất pixel (x,y) channel thứ 2
-	//			}
-	//		}
-	//	}
-	//}
-
+				if (r < 0 || r >= rows || c < 0 || c >= cols)
+					continue;
+				val += sourceImage.at<uchar>(r, c) * _kernel[k];
+			}
+			res.at<float>(y, x) = val;
+		}
+	}
+	
+	destinationImage = res;
 	return 0;
 }
 
 Convolution::Convolution()
 {
+	this->_kernelWidth = 0;
+	this->_kernelHeight = 0;
 }
 
 Convolution::~Convolution()
