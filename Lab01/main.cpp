@@ -162,61 +162,215 @@ int main(int argc, char* argv[])
 			inputPath = argv[2];
 		}
 		//Command in LAB 2
-		else if(strcmp(command, "--zoom") == 0)
-		{
-			if (argc < 5)
+		else if (strcmp(command, "--zoom") == 0)
 			{
-				throw "Missing parameter!";
+				if (argc < 5)
+				{
+					throw "Missing parameter!";
+				}
+				// khởi tạo mặc định 
+				Mat srcImg, dstImg;
+				GeometricTransformer GTF;
+				PixelInterpolate *pxInterpolate;
+				int res = 0;
+
+				interpolate = argv[2];
+				inputPath = argv[3];
+				//-----------------------------------------------
+				float sx = atof(argv[4]); //zoom theo x 
+				float sy = atof(argv[5]); //zoom theo y
+
+				// zoom = scale
+
+				if (Interpolate == "--bl")
+				{
+					pxInterpolate = new BilinearInterpolate();
+					res = GTf.Scale(srcImg, dstImg, sx, sy, pxInterpolate);
+				}
+				else
+				{
+					pxInterpolate = new NearestNeighborInterpolate();
+					res = GTf.Scale(srcImg, dstImg, sx, sy, pxInterpolate);
+				}
+
+				//in kết quả
+				if (res)
+				{
+					imshow("Source Image", srcImg);
+					imshow("Destination Image", dstImg);
+					waitKey(0);
+				}
+				else
+				{
+					throw "Error:..........";
+				}
+				//----------------------------------
+			}
+			else if (strcmp(command, "--resize") == 0)
+			{
+				if (argc < 5)
+				{
+					throw "Missing parameter!";
+				}
+				// khởi tạo mặc định 
+				Mat srcImg, dstImg;
+				GeometricTransformer GTF;
+				PixelInterpolate *pxInterpolate;
+				int res = 0;
+
+				interpolate = argv[2];
+				inputPath = argv[3];
+				//-----------------------------------------------
+				int newWidth = stoi(argv[4]); // kích thước mới 
+				int newHeight = stoi(argv[5]); 
+
+				if (Interpolate == "--bl")
+				{
+					pxInterpolate = new BilinearInterpolate();
+					res = GTf.Resize(srcImg, dstImg, newWidth, newHeight, pxInterpolate);
+				}
+				else
+				{
+					pxInterpolate = new NearestNeighborInterpolate();
+					res = GTf.Resize(srcImg, dstImg, newWidth, newHeight, pxInterpolate);
+				}
+
+				//in kết quả
+				if (res)
+				{
+					imshow("Source Image", srcImg);
+					imshow("Destination Image", dstImg);
+					waitKey(0);
+				}
+				else
+				{
+					throw "Error:..........";
+				}
+				//----------------------------------
+
+			}
+			else if (strcmp(command, "--rotate") == 0)
+			{
+				if (argc < 5)
+				{
+					throw "Missing parameter!";
+				}
+				// khởi tạo mặc định 
+				Mat srcImg, dstImg;
+				GeometricTransformer GTF;
+				PixelInterpolate *pxInterpolate;
+				int res = 0;
+
+				interpolate = argv[2];
+				inputPath = argv[3];
+				//-----------------------------------------------
+
+				float angle = atof(argv[4]);  // góc xoay
+				if (Interpolate == "--bl")
+				{
+					pxInterpolate = new BilinearInterpolate();
+					res = GTf.RotateKeepImage(srcImg, dstImg, angle, pxInterpolate);
+				}
+				else
+				{
+					pxInterpolate = new NearestNeighborInterpolate();
+					res = GTf.RotateKeepImage(srcImg, dstImg, angle, pxInterpolate);
+				}
+
+				//in kết quả
+				if (res)
+				{
+					imshow("Source Image", srcImg);
+					imshow("Destination Image", dstImg);
+					waitKey(0);
+				}
+				else
+				{
+					throw "Error:..........";
+				}
+				//----------------------------------
+
+			}
+			else if (strcmp(command, "--rotateN") == 0)
+			{
+				if (argc < 5)
+				{
+					throw "Missing parameter!";
+				}
+				// khởi tạo mặc định 
+				Mat srcImg, dstImg;
+				GeometricTransformer GTF;
+				PixelInterpolate *pxInterpolate;
+				int res = 0;
+
+				interpolate = argv[2];
+				inputPath = argv[3];
+				//-----------------------------------------------
+
+				float angle = atof(argv[4]);  // góc xoay
+				if (Interpolate == "--bl")
+				{
+					pxInterpolate = new BilinearInterpolate();
+					res = GTf.RotateUnkeepImage(srcImg, dstImg, angle, pxInterpolate);
+				}
+				else
+				{
+					pxInterpolate = new NearestNeighborInterpolate();
+					res = GTf.RotateUnkeepImage(srcImg, dstImg, angle, pxInterpolate);
+				}
+				//in kết quả
+				if (res)
+				{
+					imshow("Source Image", srcImg);
+					imshow("Destination Image", dstImg);
+					waitKey(0);
+				}
+				else
+				{
+					throw "Error:..........";
+				}
+				//----------------------------------
+			}
+			else if (strcmp(command, "--flip") == 0)
+			{
+				if (argc < 5)
+				{
+					throw "Missing parameter!";
+				}
+				// khởi tạo mặc định 
+				Mat srcImg, dstImg;
+				GeometricTransformer GTF;
+				PixelInterpolate *pxInterpolate;
+				int res = 0;
+
+				interpolate = argv[2];
+				inputPath = argv[3];
+				//-----------------------------------------------
+
+				bool direction = (argv[4]);  // string to bool :)) 
+				if (Interpolate == "--bl")
+				{
+					pxInterpolate = new BilinearInterpolate();
+					res = GTf.Flip(srcImg, dstImg, direction, pxInterpolate);
+				}
+				else
+				{
+					pxInterpolate = new NearestNeighborInterpolate();
+					res = GTf.Flip(srcImg, dstImg, direction, pxInterpolate);
+				}
+
+				if (res)
+				{
+					imshow("Source Image", srcImg);
+					imshow("Destination Image", dstImg);
+					waitKey(0);
+				}
+				else
+				{
+					throw "Error:..........";
+				}
 			}
 
-			interpolate = argv[2];
-			inputPath = argv[3];
-			cmdArguments = argv[4];
-		}
-		else if (strcmp(command, "--resize") == 0)
-		{
-			if (argc < 5)
-			{
-				throw "Missing parameter!";
-			}
-
-			interpolate = argv[2];
-			inputPath = argv[3];
-			cmdArguments = argv[4];
-		}
-		else if (strcmp(command, "--rotate") == 0)
-		{
-			if (argc < 5)
-			{
-				throw "Missing parameter!";
-			}
-			
-			interpolate = argv[2];
-			inputPath = argv[3];
-			cmdArguments = argv[4];
-		}
-		else if (strcmp(command, "--rotateN") == 0)
-		{
-			if (argc < 5)
-			{
-				throw "Missing parameter!";
-			}
-			
-			interpolate = argv[2];
-			inputPath = argv[3];
-			cmdArguments = argv[4];
-		}
-		else if (strcmp(command, "--flip") == 0)
-		{
-			if (argc < 5)
-			{
-				throw "Missing parameter!";
-			}
-			
-			interpolate = argv[2];
-			inputPath = argv[3];
-			cmdArguments = argv[4];
-		}
 		//Command in LAB 3
 		else if (strcmp(command, "--mean") == 0)
 		{
