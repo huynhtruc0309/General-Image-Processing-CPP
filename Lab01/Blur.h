@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include "opencv2/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include <vector>
 
 using namespace cv;
+using namespace std;
 
 class Blur
 {

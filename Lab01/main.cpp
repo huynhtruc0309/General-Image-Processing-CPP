@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	char* temp[4];
 	temp[0] = _strdup("Lab01.exe");
 	temp[1] = _strdup("--drawhist");
-	temp[2] = _strdup("E:\\test2.png");
+	temp[2] = _strdup("E:\\Lenna_gray.png");
 	temp[3] = _strdup("commandArgs");
 	argv = temp;
 #pragma endregion
@@ -103,6 +103,27 @@ int main(int argc, char* argv[])
 		else if (strcmp(command, "--hist") == 0)
 		{
 			inputPath = argv[2];
+
+			Mat input = imread(inputPath, IMREAD_COLOR);
+			int isSuccess;
+
+			ColorTransformer ColorTrans;
+			Mat hist, output;
+			isSuccess = ColorTrans.CalcHistogram(input, hist);
+
+			if (isSuccess == 1)
+			{
+				namedWindow("Source Image", 0);
+				imshow("Source Image", input);
+
+				namedWindow("Histogram Calculation");
+				imshow("Histogram Calculation", output);
+				waitKey(0);
+			}
+			else
+			{
+				throw "Error:..........";
+			}
 		}
 		else if (strcmp(command, "--equalhist") == 0)
 		{

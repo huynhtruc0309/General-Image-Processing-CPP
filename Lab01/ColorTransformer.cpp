@@ -147,6 +147,7 @@ Mat EqualizeGrayHistogram(Mat a)
 	}
 	return newmap;
 }
+
 // Tinh histogram anh mau
 vector<vector<int>> ColorImageCalculate(Mat a)
 {
