@@ -59,7 +59,6 @@ void AffineTransform::Translate(float dx, float dy)
 	{ 0, 1, dy },
 	{ 0, 0, 1 } };
 	this->_matrixTransform = Mat(3, 3, CV_32F, matrix)*_matrixTransform;
-
 }
 
 void AffineTransform::Rotate(float angle)
@@ -73,7 +72,6 @@ void AffineTransform::Rotate(float angle)
 
 void AffineTransform::Scale(float sx, float sy)
 {
-	
 	float matrix[3][3] = { { sx, 0 , 0 },
 	{ 0, sy, 0 },
 	{ 0, 0, 1 } };

@@ -12,8 +12,10 @@ int EdgeDetector::DetectEdge(const Mat & sourceImage, Mat & destinationImage, in
 	Mat blurImg, grayImg;
 
 	//Khử nhiễu ảnh trước bằng Gaussian filter (kernel size = 3)
-	GaussianBlur(sourceImage, blurImg, Size(3, 3), 0, 0, BORDER_DEFAULT);
-
+	Blur b;
+	if (b.BlurImage(sourceImage, blurImg, 3, 3, 2))
+		return 0; //Blur thất bại
+	//GaussianBlur(sourceImage, blurImg, Size(3, 3), 0, 0, BORDER_DEFAULT);
 	//Chuyển ảnh về dạng gray_scale
 	cvtColor(blurImg, grayImg, COLOR_BGR2GRAY);
 
@@ -76,7 +78,7 @@ int EdgeDetector::DetectEdge(const Mat & sourceImage, Mat & destinationImage, in
 		}
 	}
 
-	else if (method == 3) // Laplance Edge Detection
+	else if (method == 3) // Laplace Edge Detection
 	{
 		destinationImage.create(grayImg.size(), grayImg.type());
 		vector<vector<int>> matrix;
@@ -89,15 +91,16 @@ int EdgeDetector::DetectEdge(const Mat & sourceImage, Mat & destinationImage, in
 				matrix[i][k] = static_cast<int>(grayImg.at<uchar>(i, k));
 			}
 		}
-
 		for (int i = 1; i < grayImg.rows - 1; i++)
-		{// Tính toán theo mặt nạ Laplance để có được biên cạnh
+		{// Tính toán theo mặt nạ Laplace để có được biên cạnh
 			for (int k = 1; k < grayImg.cols - 1; k++)
 			{
-				int G = matrix[i + 1][k] + matrix[i - 1][k] + matrix[i][k + 1] + matrix[i][k - 1] - 4 * matrix[i][k];
-				
-				float alpha = round(sqrt(G));
-				destinationImage.at<uchar>(i, k) = static_cast<uchar>(alpha);
+				//int G = matrix[i - 1][k] + matrix[i + 1][k] + matrix[i][k - 1] + matrix[i][k + 1] - 8 * matrix[i][k];
+				int G = matrix[i - 1][k + 1] + matrix[i][k + 1] + matrix[i + 1][k + 1];
+				G += matrix[i - 1][k - 1] + matrix[i][k - 1] + matrix[i + 1][k - 1];
+				G += matrix[i - 1][k] - 8 * matrix[i][k] + matrix[i + 1][k];
+
+				destinationImage.at<uchar>(i, k) = saturate_cast<uchar>(G);
 			}
 		}
 	}
