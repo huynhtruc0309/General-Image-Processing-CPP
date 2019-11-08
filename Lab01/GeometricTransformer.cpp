@@ -69,7 +69,6 @@ void AffineTransform::Rotate(float angle)
 	{ sin(angle), cos(angle), 0 },
 	{ 0, 0, 1 } };
 	this->_matrixTransform = Mat(3, 3, CV_32FC1, matrix)*_matrixTransform;
-
 }
 
 void AffineTransform::Scale(float sx, float sy)
@@ -85,7 +84,6 @@ void AffineTransform::TransformPoint(float & x, float & y)
 {
 	x = this->_matrixTransform.at<float>(0, 0)*x + this->_matrixTransform.at<float>(0, 1)*y + this->_matrixTransform.at<float>(0, 2);
 	y = this->_matrixTransform.at<float>(1, 0)*x + this->_matrixTransform.at<float>(1, 1)*y + this->_matrixTransform.at<float>(1, 2);
-
 }
 
 AffineTransform::AffineTransform()
@@ -99,8 +97,6 @@ AffineTransform::AffineTransform()
 	for (int y = 0; y < 3; y++)
 		for (int x = 0; x < 3; x++)
 			_matrixTransform.at<float>(x, y) = matrix[x][y];
-	
-
 }
 
 AffineTransform::~AffineTransform()

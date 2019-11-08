@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Convolution.h"
 
 vector<float> Convolution::GetKernel()
@@ -17,8 +17,8 @@ int Convolution::DoConvolution(const Mat & sourceImage, Mat & destinationImage)
 {
 	int rows = sourceImage.rows;
 	int cols = sourceImage.cols;
-	int iStart = -_kernelWidth / 2;
-	int jStart = -_kernelHeight / 2;
+	int iStart = -this->_kernelWidth / 2;
+	int jStart = -this->_kernelHeight / 2;
 
 	Mat res(rows, cols, CV_32F);
 
@@ -27,21 +27,21 @@ int Convolution::DoConvolution(const Mat & sourceImage, Mat & destinationImage)
 		for (int y = 0; y < rows; y++)
 		{
 			float val = 0;
-			for (int k = 0; k < _kernel.size(); k++)
+			for (int k = 0; k < this->_kernel.size(); k++)
 			{
-				int i = iStart + k % _kernelWidth;
-				int j = jStart + k / _kernelWidth;
+				int i = iStart + k % this->_kernelWidth;
+				int j = jStart + k / this->_kernelWidth;
 				int r = y - j;
 				int c = x - i;
 
 				if (r < 0 || r >= rows || c < 0 || c >= cols)
 					continue;
-				val += sourceImage.at<uchar>(r, c) * _kernel[k];
+				val += sourceImage.at<uchar>(r, c) * this->_kernel[k];
 			}
 			res.at<float>(y, x) = val;
 		}
 	}
-
+	
 	destinationImage = res;
 	return 0;
 }
