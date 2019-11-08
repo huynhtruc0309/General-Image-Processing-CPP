@@ -2,7 +2,6 @@
 #include "opencv2/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <opencv2/core/types_c.h>
-
 using namespace cv;
 
 class Converter

@@ -1,5 +1,4 @@
-﻿#include "pch.h"
-#include "ColorTransformer.h"
+﻿#include "ColorTransformer.h"
 
 int ColorTransformer::ChangeBrighness(const Mat& sourceImage, Mat& destinationImage, short b)
 {
@@ -29,7 +28,7 @@ int ColorTransformer::ChangeBrighness(const Mat& sourceImage, Mat& destinationIm
 			res[2] = (uchar)red;
 		}
 	}
-	return 0;
+	return 1;
 }
 
 int ColorTransformer::ChangeContrast(const Mat& sourceImage, Mat& destinationImage, float c)

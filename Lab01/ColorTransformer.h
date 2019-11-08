@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include <vector>
-#include <opencv2\opencv.hpp> //include all module
-#include "opencv2/core.hpp"
+#include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-
+#include "opencv2/imgproc/imgproc.hpp"
 using namespace cv;
 using namespace std;
 
