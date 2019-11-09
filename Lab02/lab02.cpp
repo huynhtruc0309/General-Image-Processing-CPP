@@ -1,4 +1,3 @@
-﻿//
 #include "GeometricTransformer.h"
 #include <string.h>
 #include <iostream>
@@ -44,7 +43,7 @@ int main(int argc, char* argv[])
 			float sx = atof(argv[4]); //zoom theo x 
 			float sy = atof(argv[5]); //zoom theo y
 									  // zoom = scale
-			if (Interpolate == "--bl")
+			if (strcmp(Interpolate, "--bl") == 0)
 			{
 				pxInterpolate = new BilinearInterpolate();
 				isSuccess = GTF.Scale(srcImg, dstImg, sx, sy, pxInterpolate);
@@ -62,7 +61,7 @@ int main(int argc, char* argv[])
 			int newWidth = stoi(argv[4]); // kích thước mới 
 			int newHeight = stoi(argv[5]);
 
-			if (Interpolate == "--bl")
+			if (strcmp(Interpolate, "--bl") == 0)
 			{
 				pxInterpolate = new BilinearInterpolate();
 				isSuccess = GTF.Resize(srcImg, dstImg, newWidth, newHeight, pxInterpolate);
@@ -78,7 +77,7 @@ int main(int argc, char* argv[])
 		{
 			
 			float angle = atof(argv[4]);  // góc xoay
-			if (Interpolate == "--bl")
+			if (strcmp(Interpolate, "--bl") == 0)
 			{
 				pxInterpolate = new BilinearInterpolate();
 				isSuccess = GTF.RotateKeepImage(srcImg, dstImg, angle, pxInterpolate);
@@ -94,7 +93,7 @@ int main(int argc, char* argv[])
 		{
 			
 			float angle = atof(argv[4]);  // góc xoay
-			if (Interpolate == "--bl")
+			if (strcmp(Interpolate, "--bl") == 0)
 			{
 				pxInterpolate = new BilinearInterpolate();
 				isSuccess = GTF.RotateUnkeepImage(srcImg, dstImg, angle, pxInterpolate);
@@ -109,7 +108,7 @@ int main(int argc, char* argv[])
 		else if (strcmp(command, "--flip") == 0)
 		{
 			bool direction = (argv[4]);  // string to bool :)) 
-			if (Interpolate == "--bl")
+			if (strcmp(Interpolate, "--bl") == 0)
 			{
 				pxInterpolate = new BilinearInterpolate();
 				isSuccess = GTF.Flip(srcImg, dstImg, direction, pxInterpolate);
