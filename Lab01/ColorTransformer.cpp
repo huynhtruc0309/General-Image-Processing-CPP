@@ -13,7 +13,7 @@ int ColorTransformer::ChangeBrighness(const Mat& sourceImage, Mat& destinationIm
 		const uchar* src = sourceImage.ptr<uchar>(i);
 		uchar* res = destinationImage.ptr<uchar>(i);
 
-		for (int j = 0; j < cols; j++, src++, res++)
+		for (int j = 0; j < cols; j++, src+=3, res+=3)
 		{
 			float blue = src[0] + b;
 			float green = src[1] + b;
