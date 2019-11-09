@@ -57,18 +57,16 @@ void AffineTransform::Translate(float dx, float dy)
 	float matrix[3][3] = { { 1, 0 , dx },
 	{ 0, 1, dy },
 	{ 0, 0, 1 } };
-	this->_matrixTransform = Mat(3, 3, CV_32F, matrix)*_matrixTransform;
-
+	this->_matrixTransform = _matrixTransform * Mat(3, 3, CV_32F, matrix);
 }
 
 void AffineTransform::Rotate(float angle)
 {
-	angle = angle*M_PI / 180;
-	float matrix[3][3] = { { cos(angle), -sin(angle) , 0 },
-	{ sin(angle), cos(angle), 0 },
+	angle = angle * M_PI / 180.0;
+	float matrix[3][3] = { { cosf(angle), -sinf(angle) , 0 },
+	{ sinf(angle), cosf(angle), 0 },
 	{ 0, 0, 1 } };
-	this->_matrixTransform = Mat(3, 3, CV_32FC1, matrix)*_matrixTransform;
-
+	this->_matrixTransform = _matrixTransform * Mat(3, 3, CV_32FC1, matrix);
 }
 
 void AffineTransform::Scale(float sx, float sy)
@@ -77,14 +75,15 @@ void AffineTransform::Scale(float sx, float sy)
 	float matrix[3][3] = { { sx, 0 , 0 },
 	{ 0, sy, 0 },
 	{ 0, 0, 1 } };
-	this->_matrixTransform = Mat(3, 3, CV_32FC1, matrix)*_matrixTransform;
+	this->_matrixTransform = _matrixTransform * Mat(3, 3, CV_32FC1, matrix);
 }
 
 void AffineTransform::TransformPoint(float & x, float & y)
 {
-	x = this->_matrixTransform.at<float>(0, 0)*x + this->_matrixTransform.at<float>(0, 1)*y + this->_matrixTransform.at<float>(0, 2);
-	y = this->_matrixTransform.at<float>(1, 0)*x + this->_matrixTransform.at<float>(1, 1)*y + this->_matrixTransform.at<float>(1, 2);
 
+	float tempX = this->_matrixTransform.at<float>(0, 0)*x + this->_matrixTransform.at<float>(0, 1)*y + this->_matrixTransform.at<float>(0, 2);
+	y = this->_matrixTransform.at<float>(1, 0)*x + this->_matrixTransform.at<float>(1, 1)*y + this->_matrixTransform.at<float>(1, 2);
+	x = tempX;
 }
 
 AffineTransform::AffineTransform()
@@ -150,13 +149,59 @@ int GeometricTransformer::Transform(const Mat & beforeImage, Mat & afterImage, A
 
 int GeometricTransformer::RotateKeepImage(const Mat & srcImage, Mat & dstImage, float angle, PixelInterpolate * interpolator)
 {
+	if (srcImage.empty())
+		return 0;
+
+	AffineTransform* mainAffine = new AffineTransform();
+	AffineTransform* tempAffine = new AffineTransform();
+
+	float radAngle = angle * M_PI / 180;
+	int srcWidth = srcImage.cols;
+	int srcHeight = srcImage.rows;
+	int dstWidth = srcWidth * fabs(cosf(radAngle)) + srcHeight * fabs(sinf(radAngle));
+	int dstHeight = srcWidth * fabs(sinf(radAngle)) + srcHeight * fabs(cosf(radAngle));
+
+	float centerX = srcWidth / 2;
+	float centerY = srcHeight / 2;
+
+	dstImage.create(dstHeight, dstWidth, srcImage.type());
+	tempAffine->Rotate(angle);
+	tempAffine->TransformPoint(centerY, centerX);
+
+	float dx= centerY - dstHeight / 2, dy= centerX - dstWidth / 2;
+	mainAffine->Rotate(-angle);
+	mainAffine->Translate(dx, dy);
+
+	Transform(srcImage, dstImage, mainAffine, interpolator);
 
 	return 1;
 }
 
 int GeometricTransformer::RotateUnkeepImage(const Mat & srcImage, Mat & dstImage, float angle, PixelInterpolate * interpolator)
 {
-	
+	if (srcImage.empty())
+		return 0;
+
+	AffineTransform* mainAffine = new AffineTransform();
+	AffineTransform* tempAffine = new AffineTransform();
+
+	float radAngle = angle * M_PI / 180;
+	int srcWidth = srcImage.cols;
+	int srcHeight = srcImage.rows;
+
+	float centerX = srcWidth / 2;
+	float centerY = srcHeight / 2;
+
+	dstImage.create(srcHeight, srcWidth, srcImage.type());
+	tempAffine->Rotate(angle);
+	tempAffine->TransformPoint(centerY, centerX);
+
+	float dx = centerY - srcHeight / 2, dy = centerX - srcWidth / 2;
+	mainAffine->Rotate(-angle);
+	mainAffine->Translate(dx, dy);
+
+	Transform(srcImage, dstImage, mainAffine, interpolator);
+
 	return 1;
 }
 
