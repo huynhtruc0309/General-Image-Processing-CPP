@@ -11,7 +11,7 @@ PixelInterpolate::~PixelInterpolate()
 
 //Các hàm của lớp BilinearInterpolate
 
-void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDstRow)
+void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDst)
 {
 	//toạ độ 
 	int x1, y1, x2, y2;
@@ -44,13 +44,13 @@ BilinearInterpolate::~BilinearInterpolate()
 
 //Các hàm của lớp NearestNeighborInterpolate
 
-void NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDstRow)
+void NearestNeighborInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDst)
 {
 	int x = (int)tx, y = (int)ty;
-	uchar * pSrcRow = pSrc + (x * srcWidthStep + y * nChannels);
+	uchar * p = pSrc + (x * srcWidthStep + y * nChannels);
 
 	for (int i = 0; i < nChannels; i++)
-		pDstRow[i] = pSrcRow[i];
+		pDst[i] = p[i];
 }
 
 NearestNeighborInterpolate::NearestNeighborInterpolate()
