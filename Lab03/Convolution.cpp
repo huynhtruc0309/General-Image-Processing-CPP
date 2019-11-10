@@ -15,6 +15,11 @@ void Convolution::SetKernel(vector<float> kernel, int kWidth, int kHeight)
 
 int Convolution::DoConvolution(const Mat & sourceImage, Mat & destinationImage)
 {
+	if (sourceImage.empty())
+	{
+		return 1;
+	}
+	
 	int rows = sourceImage.rows;
 	int cols = sourceImage.cols;
 	int iStart = -_kernelWidth / 2;
