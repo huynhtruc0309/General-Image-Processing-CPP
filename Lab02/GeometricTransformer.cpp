@@ -162,24 +162,37 @@ int GeometricTransformer::RotateKeepImage(const Mat & srcImage, Mat & dstImage, 
 {
 	if (srcImage.empty())
 		return 0;
-
+	
+	//mainAffine dùng để tính toán ma trận cho việc xoay ảnh
 	AffineTransform* mainAffine = new AffineTransform();
+
+	//tempAffine dùng để tính toán độ dời giữa việc xoay quanh tâm và quanh gốc toạ độ
 	AffineTransform* tempAffine = new AffineTransform();
 
+	//Chuyển góc về dạng radian
 	float radAngle = angle * M_PI / 180;
 	int srcWidth = srcImage.cols;
 	int srcHeight = srcImage.rows;
+
+	//Tính chiều dài, chiều rộng ảnh mới
 	int dstWidth = srcWidth * fabs(cosf(radAngle)) + srcHeight * fabs(sinf(radAngle));
 	int dstHeight = srcWidth * fabs(sinf(radAngle)) + srcHeight * fabs(cosf(radAngle));
 
+	//Khởi tạo ảnh mới
+	dstImage.create(dstHeight, dstWidth, srcImage.type());
+
+	//Tính toạ độ tâm của ảnh cũ
 	float centerX = srcWidth / 2;
 	float centerY = srcHeight / 2;
 
-	dstImage.create(dstHeight, dstWidth, srcImage.type());
+	//Thực hiện xoay tâm của ảnh cũ (quanh gốc toạ độ)
 	tempAffine->Rotate(angle);
 	tempAffine->TransformPoint(centerY, centerX);
 
+	//Tính toán độ dời
 	float dx= centerY - dstHeight / 2, dy= centerX - dstWidth / 2;
+
+	//Tính toán ma trận cho việc xoay ảnh quanh tâm
 	mainAffine->Rotate(-angle);
 	mainAffine->Translate(dx, dy);
 
@@ -193,21 +206,32 @@ int GeometricTransformer::RotateUnkeepImage(const Mat & srcImage, Mat & dstImage
 	if (srcImage.empty())
 		return 0;
 
+	//mainAffine dùng để tính toán ma trận cho việc xoay ảnh
 	AffineTransform* mainAffine = new AffineTransform();
+
+	//tempAffine dùng để tính toán độ dời giữa việc xoay quanh tâm và quanh gốc toạ độ
 	AffineTransform* tempAffine = new AffineTransform();
 
+	//Chuyển góc về dạng radian
 	float radAngle = angle * M_PI / 180;
 	int srcWidth = srcImage.cols;
 	int srcHeight = srcImage.rows;
 
+	//Tính toạ độ tâm của ảnh cũ
 	float centerX = srcWidth / 2;
 	float centerY = srcHeight / 2;
 
+	//Khởi tạo ảnh mới với kích thước của ảnh cũ
 	dstImage.create(srcHeight, srcWidth, srcImage.type());
+
+	//Thực hiện xoay tâm của ảnh cũ (quanh gốc toạ độ)
 	tempAffine->Rotate(angle);
 	tempAffine->TransformPoint(centerY, centerX);
 
+	//Tính toán độ dời
 	float dx = centerY - srcHeight / 2, dy = centerX - srcWidth / 2;
+
+	//Tính toán ma trận cho việc xoay ảnh quanh tâm
 	mainAffine->Rotate(-angle);
 	mainAffine->Translate(dx, dy);
 
