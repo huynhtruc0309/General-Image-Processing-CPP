@@ -19,13 +19,13 @@ public:
 	- pSrc: con trỏ ảnh gốc
 	- srcWidthStep: widthstep của ảnh gốc
 	- nChannels: số kênh màu của ảnh gốc
-	- pDstRow: con trỏ của ảnh kết quả đến pixel nội suy màu (thay vì trả về con trỏ thì mình dùng con trỏ sẵn trong hàm)
+	- pDst: con trỏ của ảnh kết quả đến pixel nội suy màu (thay vì trả về con trỏ thì mình dùng con trỏ sẵn trong hàm)
 	
 	*/
 	virtual void Interpolate(
 		float tx, float ty,
 		uchar* pSrc, int srcWidthStep, int nChannels,
-		uchar* pDstRow) = 0;
+		uchar* pDst) = 0;
 	PixelInterpolate();
 	~PixelInterpolate();
 };
@@ -39,7 +39,7 @@ public:
 	void Interpolate(
 		float tx, float ty,
 		uchar* pSrc, int srcWidthStep, int nChannels,
-		uchar* pDstRow);
+		uchar* pDst);
 	BilinearInterpolate();
 	~BilinearInterpolate();
 };
@@ -53,7 +53,7 @@ public:
 	void Interpolate(
 		float tx, float ty,
 		uchar* pSrc, int srcWidthStep, int nChannels,
-		uchar* pDstRow);
+		uchar* pDst);
 	NearestNeighborInterpolate();
 	~NearestNeighborInterpolate();
 };
