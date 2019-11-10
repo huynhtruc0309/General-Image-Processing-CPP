@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 #pragma region ONLY_FOR_DEBUG
-	argc = 6;
+	/*argc = 6;
 	char* temp[6];
 	temp[0] = _strdup("main.exe");
 	temp[1] = _strdup("--zoom");
@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	temp[3] = _strdup("test_color.png");
 	temp[4] = _strdup("1.5");
 	temp[5] = _strdup("1.5");
-	argv = temp;
+	argv = temp;*/
 #pragma endregion
 
 	char *command, *inputPath, *Interpolate, *cmdArguments;
@@ -142,12 +142,12 @@ int main(int argc, char* argv[])
 
 
 #pragma region ONLY_FOR_DEBUG
-	free(temp[0]);
+	/*free(temp[0]);
 	free(temp[1]);
 	free(temp[2]);
 	free(temp[3]);
 	free(temp[4]);
-	free(temp[5]);
+	free(temp[5]);*/
 #pragma endregion
 
 	//system("pause");

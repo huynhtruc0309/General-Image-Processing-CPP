@@ -9,22 +9,22 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 #pragma region ONLY_FOR_DEBUG
-	argc = 5;
+	/*argc = 5;
 	char* temp[5];
 	temp[0] = _strdup("main.exe");
 	temp[1] = _strdup("--laplace");
 	temp[2] = _strdup("--bl");
 	temp[3] = _strdup("test_gray.png");
 	temp[4] = _strdup("commandArgs");
-	argv = temp;
+	argv = temp;*/
 #pragma endregion
 
-	char *command, *inputPath, *Interpolate, *cmdArguments;
+	char *command, *inputPath, *cmdArguments;
 
 	try
 	{
 		command = argv[1];
-		inputPath = argv[3];
+		inputPath = argv[2];
 
 		// khởi tạo mặc định 
 		int isSuccess = 0;
@@ -88,11 +88,11 @@ int main(int argc, char* argv[])
 
 
 #pragma region ONLY_FOR_DEBUG
-	free(temp[0]);
+	/*free(temp[0]);
 	free(temp[1]);
 	free(temp[2]);
 	free(temp[3]);
-	free(temp[4]);
+	free(temp[4]);*/
 #pragma endregion
 
 	//system("pause");

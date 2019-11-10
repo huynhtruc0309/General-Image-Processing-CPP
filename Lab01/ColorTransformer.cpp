@@ -64,28 +64,45 @@ int ColorTransformer::CalcHistogram(const Mat& sourceImage, Mat& histMatrix)
 	if (sourceImage.empty()) //Kiểm tra hình đâu vào và thoát ra nếu lỗi
 		return 0;
 
-	vector<Mat> img_rgb; //Vector chứa các ma trận được tách ra theo channel màu
+	if (sourceImage.channels() == 1) 
+	{
+		histMatrix = Mat::zeros(1, 256, CV_32F);
 
-	int w = 512, h = 400; //Kích thước khung histogram
-	int sizeHist = 256; //Số lượng thành phần của histogram của histogram
-	split(sourceImage, img_rgb); //Tách thành các channel
+		int gray;
+		for (int x = 0; x < sourceImage.cols; x++)
+			for (int y = 0; y < sourceImage.rows; y++)
+			{
+				// truy xuất đến toạ độ ảnh
+				gray = sourceImage.at<uchar>(y, x);
+				histMatrix.at<float>(0, gray)++; //Tăng số lượng điểm ảnh có tại màu blue
+			}
+	}
 
-	int red, green, blue;
-	histMatrix = Mat::zeros(3, 256, CV_32F);
+	else 
+	{
+		vector<Mat> img_rgb; //Vector chứa các ma trận được tách ra theo channel màu
 
-	for (int x = 0; x < sourceImage.cols; x++)
-		for (int y = 0; y < sourceImage.rows; y++)
-		{
-			// truy xuất đến toạ độ ảnh
-			blue = img_rgb[0].at<uchar>(y, x);
-			histMatrix.at<float>(0, blue)++; //Tăng số lượng điểm ảnh có tại màu blue
+		int w = 512, h = 400; //Kích thước khung histogram
+		int sizeHist = 256; //Số lượng thành phần của histogram của histogram
+		split(sourceImage, img_rgb); //Tách thành các channel
 
-			green = img_rgb[1].at<uchar>(y, x);
-			histMatrix.at<float>(1, green)++; //Tăng số lượng điểm ảnh có tại màu green
+		int red, green, blue;
+		histMatrix = Mat::zeros(3, 256, CV_32F);
 
-			red = img_rgb[2].at<uchar>(y, x);
-			histMatrix.at<float>(2, red)++; //Tăng số lượng điểm ảnh có tại màu red
-		}
+		for (int x = 0; x < sourceImage.cols; x++)
+			for (int y = 0; y < sourceImage.rows; y++)
+			{
+				// truy xuất đến toạ độ ảnh
+				blue = img_rgb[0].at<uchar>(y, x);
+				histMatrix.at<float>(0, blue)++; //Tăng số lượng điểm ảnh có tại màu blue
+
+				green = img_rgb[1].at<uchar>(y, x);
+				histMatrix.at<float>(1, green)++; //Tăng số lượng điểm ảnh có tại màu green
+
+				red = img_rgb[2].at<uchar>(y, x);
+				histMatrix.at<float>(2, red)++; //Tăng số lượng điểm ảnh có tại màu red
+			}
+	}
 
 	return 1;
 }
@@ -230,24 +247,42 @@ int ColorTransformer::DrawHistogram(const Mat& histMatrix, Mat& histImage)
 	int bin = cvRound((double)w / sizeHist);
 	histImage = Mat(h, w, CV_8UC3, Scalar(0, 0, 0));
 
-	Mat img_b = histMatrix.row(0), img_g = histMatrix.row(1), img_r = histMatrix.row(2);
-
-	//Chuẩn hoá giá trị
-	normalize(img_b, img_b, 0, histImage.rows, NORM_MINMAX, -1, Mat());
-	normalize(img_g, img_g, 0, histImage.rows, NORM_MINMAX, -1, Mat());
-	normalize(img_r, img_r, 0, histImage.rows, NORM_MINMAX, -1, Mat());
-
-	for (int i = 1; i < sizeHist; i++)
+	if (histMatrix.rows == 1) //Nếu là ảnh xám
 	{
-		line(histImage, Point(bin*(i - 1), h - cvRound(img_b.at<float>(i - 1))),
-			Point(bin*(i), h - cvRound(img_b.at<float>(i))),
-			Scalar(255, 0, 0), 2, 8, 0);
-		line(histImage, Point(bin*(i - 1), h - cvRound(img_g.at<float>(i - 1))),
-			Point(bin*(i), h - cvRound(img_g.at<float>(i))),
-			Scalar(0, 255, 0), 2, 8, 0);
-		line(histImage, Point(bin*(i - 1), h - cvRound(img_r.at<float>(i - 1))),
-			Point(bin*(i), h - cvRound(img_r.at<float>(i))),
-			Scalar(0, 0, 255), 2, 8, 0);
+		Mat img = histMatrix.row(0);
+
+		//Chuẩn hoá giá trị
+		normalize(img, img, 0, histImage.rows, NORM_MINMAX, -1, Mat());
+		
+		for (int i = 1; i < sizeHist; i++)
+		{
+			line(histImage, Point(bin*(i - 1), h - cvRound(img.at<float>(i - 1))),
+				Point(bin*(i), h - cvRound(img.at<float>(i))),
+				Scalar(255, 0, 0), 2, 8, 0);
+		}
+	}
+
+	else //Nếu là ảnh màu
+	{
+		Mat img_b = histMatrix.row(0), img_g = histMatrix.row(1), img_r = histMatrix.row(2);
+
+		//Chuẩn hoá giá trị
+		normalize(img_b, img_b, 0, histImage.rows, NORM_MINMAX, -1, Mat());
+		normalize(img_g, img_g, 0, histImage.rows, NORM_MINMAX, -1, Mat());
+		normalize(img_r, img_r, 0, histImage.rows, NORM_MINMAX, -1, Mat());
+
+		for (int i = 1; i < sizeHist; i++)
+		{
+			line(histImage, Point(bin*(i - 1), h - cvRound(img_b.at<float>(i - 1))),
+				Point(bin*(i), h - cvRound(img_b.at<float>(i))),
+				Scalar(255, 0, 0), 2, 8, 0);
+			line(histImage, Point(bin*(i - 1), h - cvRound(img_g.at<float>(i - 1))),
+				Point(bin*(i), h - cvRound(img_g.at<float>(i))),
+				Scalar(0, 255, 0), 2, 8, 0);
+			line(histImage, Point(bin*(i - 1), h - cvRound(img_r.at<float>(i - 1))),
+				Point(bin*(i), h - cvRound(img_r.at<float>(i))),
+				Scalar(0, 0, 255), 2, 8, 0);
+		}
 	}
 
 	return 1;

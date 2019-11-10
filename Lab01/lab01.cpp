@@ -12,13 +12,13 @@ int main(int argc, char* argv[])
 	argc = 4;
 	char* temp[4];
 	temp[0] = _strdup("main.exe");
-	temp[1] = _strdup("--rgb2gray");
-	temp[2] = _strdup("test_color.png");
+	temp[1] = _strdup("--drawhist");
+	temp[2] = _strdup("test_gray.png");
 	temp[3] = _strdup("f");
 	argv = temp;
 #pragma endregion
 
-	char* command, *inputPath, *interpolate, *cmdArguments;
+	char* command, *inputPath, *cmdArguments;
 
 	try
 	{
