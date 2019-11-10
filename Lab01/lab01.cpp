@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 #pragma region ONLY_FOR_DEBUG
 	argc = 4;
 	char* temp[4];
-	temp[0] = _strdup("Lab01.exe");
+	temp[0] = _strdup("main.exe");
 	temp[1] = _strdup("--rgb2gray");
 	temp[2] = _strdup("test_color.png");
 	temp[3] = _strdup("f");
