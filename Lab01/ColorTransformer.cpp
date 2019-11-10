@@ -288,17 +288,39 @@ int ColorTransformer::DrawHistogram(const Mat& histMatrix, Mat& histImage)
 	return 1;
 }
 
+/* Hàm CalcHistToCmp dùng để tính toán histogram dùng riêng cho việc so sánh
+** (tăng độ chính xác so với CalcHistogram)
+** Tham so:
+**    sourceImage: ảnh ban đầu
+**    histMatrix: histogram có dạng 256x256x256 (BGR)
+*/
 int CalcHistToCmp(const Mat& sourceImage, Mat& histMatrix)
 {
 	if (sourceImage.empty())
 		return 0;
-	int size[] = { 256,256,256};
+
+	int n = sourceImage.channels();
+
+	//Khởi tạo histogram kích thước 256x256x256
+	int size[] = { 256,256,256 };
 	histMatrix = Mat(3, size, CV_32F, cv::Scalar(0));
+
+	//Duyệt qua từng điểm ảnh
 	for (int i=0;i<sourceImage.rows;i++)
 		for (int j = 0; j < sourceImage.cols; j++)
 		{
-			Vec3b bgr = sourceImage.at <Vec3b>(i, j);
-			histMatrix.at<float>(bgr[0], bgr[1], bgr[2]) += 1;
+			//Trường hợp ảnh xám, chỉ có 1 kênh màu
+			if (n == 1)
+			{
+				int intensity = sourceImage.at<uchar>(i, j);
+				histMatrix.at<float>(intensity, intensity, intensity) += 1;
+			}
+			//Trường hợp ảnh màu
+			else
+			{
+				Vec3b bgr = sourceImage.at <Vec3b>(i, j);
+				histMatrix.at<float>(bgr[0], bgr[1], bgr[2]) += 1;
+			}
 		}
 	return 1;
 }
@@ -306,18 +328,23 @@ int CalcHistToCmp(const Mat& sourceImage, Mat& histMatrix)
 float ColorTransformer::CompareImage(const Mat& image1, Mat& image2)
 {
 	Mat hist1, hist2;
+	//Tính histogram cho ảnh 1, chuẩn hoá về [0.0-1.0]
 	CalcHistToCmp(image1, hist1);
 	normalize(hist1, hist1, 0, 1, NORM_MINMAX, -1, Mat());
+
+	//Tính histogram cho ảnh 2, chuẩn hoá về [0.0-1.0]
 	CalcHistToCmp(image2, hist2);
 	normalize(hist2, hist2, 0, 1, NORM_MINMAX, -1, Mat());
-	float res = 0.0f;
 
+	float res = 0.0f;
+	//Duyệt qua từng màu của histogram
 	for (int i = 0; i < 256; i++)
 		for (int j = 0; j < 256; j++)
 			for (int k = 0; k < 256; k++)
 			{
 				float ai = hist1.at<float>(i, j, k);
 				float bi = hist2.at<float>(i, j, k);
+				//Tính bằng phương pháp chi-square
 				if (ai != 0)
 					res += (ai - bi) * (ai - bi) / ai;
 			}
