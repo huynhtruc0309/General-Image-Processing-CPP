@@ -1,7 +1,8 @@
 #include "Blur.h"
 
-vector<vector<int>> MeanCalculate(vector<vector<int>> ht)
+vector<vector<int>> MeanCalculate(vector<vector<int>> ht, int kWidth = 3, int kHeight = 3)
 {
+	// Mặc định Kernel Mean có ma trận 3x3 khi chập với ảnh
 	vector<vector<int>> hist;
 	hist.resize(ht.size());
 
@@ -50,7 +51,7 @@ vector<vector<int>> MeanCalculate(vector<vector<int>> ht)
 	return hist;
 }
 
-Mat Meanfilter(const Mat a)
+Mat Meanfilter(const Mat a, int kWidth = 3, int kHeight = 3)
 {
 	Mat newmap = a.clone();
 
@@ -81,8 +82,9 @@ Mat Meanfilter(const Mat a)
 	return newmap;
 }
 
-vector<vector<int>> MedianCalculate(vector<vector<int>> ht)
+vector<vector<int>> MedianCalculate(vector<vector<int>> ht, int kWidth = 3, int kHeight = 3)
 {
+	// Mặc định Kernel Median có ma trận 3x3 khi chập với ảnh
 	vector<vector<int>> hist;
 	hist.resize(ht.size());
 
@@ -141,7 +143,7 @@ vector<vector<int>> MedianCalculate(vector<vector<int>> ht)
 	return hist;
 }
 
-Mat Medianfilter(const Mat a)
+Mat Medianfilter(const Mat a, int kWidth = 3, int kHeight = 3)
 {
 	Mat newmap = a.clone();
 
@@ -172,86 +174,61 @@ Mat Medianfilter(const Mat a)
 	return newmap;
 }
 
-void GaussianFilterCreation(vector<vector<double>> &GKernel)
+void GaussianFilterCreation(vector<vector<double>> &GKernel, int kWidth, int kHeight)
 {
-	GKernel.resize(5);
-	for (int i = 0; i < 5; i++) GKernel[i].resize(5);
-	// Cong thuc Gaussian: e^(x^2+y^2/(2*sigma^2)) / (pi*2*sigma^2)
+	// Kernel Gauss có ma trận 3x3, 5x5, 7x7, 9x9,...
+	GKernel.resize(kWidth);
+	for (int i = 0; i < kWidth; i++) GKernel[i].resize(kHeight);
+	
 	double sigma = 1.0;
 	double r, s = 2.0 * sigma * sigma;
 	
 	double sum = 0.0;
-	// Khởi tạo Kernel
-	for (int x = -2; x <= 2; x++) {
-		for (int y = -2; y <= 2; y++) {
+	// Khởi tạo kWidth x kHeight kernel
+	for (int x = round(-kWidth/2); x <= round(kWidth/2); x++) {
+		for (int y = round(-kHeight/2); y <= round(kHeight/2); y++) {
 			r = x * x + y * y;
-			GKernel[x + 2][y + 2] = (exp(-r / s)) / (3.14159 * s);
-			sum += GKernel[x + 2][y + 2];
+			GKernel[x + round(kWidth / 2)][y + round(kHeight / 2)] = (exp(-r / s)) / (3.14159 * s);
+			sum += GKernel[x + round(kWidth / 2)][y + round(kHeight / 2)];
 		}
 	}
-	// Normalise cái Kernel
-	for (int i = 0; i < 5; ++i)
-		for (int j = 0; j < 5; ++j)
+	// Chuẩn hoá the Kernel 
+	for (int i = 0; i < kWidth; ++i)
+		for (int j = 0; j < kHeight; ++j)
 			GKernel[i][j] /= sum;
 }
 
-vector<vector<int>> GaussianCalculate(vector<vector<int>> ht)
+vector<vector<int>> GaussianCalculate(vector<vector<int>> ht, int kWidth, int kHeight)
 {
 	vector<vector<int>> hist;
 	hist.resize(ht.size());
 
 	for (int i = 0; i < hist.size(); i++) hist[i].resize(ht[i].size());
-	
+	hist = ht;
 	vector <vector<double>> gauss;
-	GaussianFilterCreation(gauss);
+	GaussianFilterCreation(gauss, kWidth, kHeight);
 	
-	for (int i = 2; i < ht.size() - 2; i++)
+	for (int i = round(kWidth / 2); i < ht.size() - round(kWidth / 2); i++)
 	{
-		for (int k = 2; k < ht[i].size() - 2; k++)
+		for (int k = round(kHeight / 2); k < ht[i].size() - round(kHeight / 2); k++)
 		{
 			double sum = 0;
-			for (int s = -2; s <= 2; s++)
+			for (int s = round(-kWidth / 2); s <= round(kWidth / 2); s++)
 			{
-				for (int l = -2; l <= 2; l++)
+				for (int l = round(-kHeight / 2); l <= round(kHeight / 2); l++)
 				{
 					int fi = ht[i + s][k + l];
-					sum += fi*gauss[s + 2][l + 2];
+					sum += fi*gauss[s + round(kWidth / 2)][l + round(kWidth / 2)];
 				}
 			}
 			hist[i][k] = round(sum);
 		}
 	}
 
-	for (int i = 0; i < ht.size(); i++)
-	{
-		hist[i][0] = ht[i][0];
-		hist[i][1] = ht[i][1];
-	}
-
-	for (int i = 0; i < ht[0].size(); i++)
-	{
-		hist[0][i] = ht[0][i];
-		hist[1][i] = ht[1][i];
-	}
-
-	int n = ht.size() - 1;
-
-	for (int i = 0; i < ht.size(); i++)
-	{
-		hist[i][n] = ht[i][n];
-		hist[i][n-1] = ht[i][n-1];
-	}
-
-	for (int i = 0; i < ht[0].size(); i++)
-	{
-		hist[n][i] = ht[n][i];
-		hist[n-1][i] = ht[n-1][i];
-	}
-
 	return hist;
 }
 
-Mat Gaussianfilter(const Mat a)
+Mat Gaussianfilter(const Mat a, int kWidth, int kHeight)
 {
 	Mat newmap = a.clone();
 
@@ -269,7 +246,7 @@ Mat Gaussianfilter(const Mat a)
 		}
 	}
 
-	hist = GaussianCalculate(hist);
+	hist = GaussianCalculate(hist,kWidth,kHeight);
 
 	for (int i = 0; i < newmap.rows; i++)
 	{
@@ -289,11 +266,11 @@ int Blur::BlurImage(const Mat& sourceImage, Mat& destinationImage, int kWidth, i
 	//2: Gaussian Filter
 	if (sourceImage.empty()) return 1;
 
-	if (method == 0) destinationImage = Meanfilter(sourceImage);
-	
-	if (method == 1) destinationImage = Medianfilter(sourceImage);
+	if (method == 0) destinationImage = Meanfilter(sourceImage, kWidth, kHeight);
 
-	if (method == 2) destinationImage = Gaussianfilter(sourceImage);
+	if (method == 1) destinationImage = Medianfilter(sourceImage, kWidth, kHeight);
+
+	if (method == 2) destinationImage = Gaussianfilter(sourceImage, kWidth, kHeight);
 
 	return 0;
 }

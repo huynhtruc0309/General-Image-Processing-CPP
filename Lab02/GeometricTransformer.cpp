@@ -13,14 +13,25 @@ PixelInterpolate::~PixelInterpolate()
 
 void BilinearInterpolate::Interpolate(float tx, float ty, uchar * pSrc, int srcWidthStep, int nChannels, uchar * pDstRow)
 {
-	int l = round(tx), r = round(ty);
-	float a = tx - l, b = ty - r;
-	uchar * pSrcRow0 = pSrc + (l * srcWidthStep + r * nChannels); // f(l, r)
-	uchar * pSrcRow1 = pSrc + ((l + 1) * srcWidthStep + r * nChannels); // f(l + 1, r)
-	uchar * pSrcRow2 = pSrc + (l * srcWidthStep + (r + 1) * nChannels); // f (l, r + 1)
-	uchar * pSrcRow3 = pSrc + ((l + 1) * srcWidthStep + (r + 1) * nChannels); // f(l + 1, r + 1)
+	//toạ độ 
+	int x1, y1, x2, y2;
+	x1 = floor(tx);
+	y1 = floor(ty);
+	x2 = x1 + 1;
+	y2 = y1 + 1;
+
+	// p11(x1,y1)			p12(x1,y2)
+	//		p(tx,ty)
+	// p21(x2,y1)			P22(x2,y2)
+	uchar* p11 = (pSrc + x1 * srcWidthStep + y1 * nChannels);
+	uchar* p21 = (pSrc + x2 * srcWidthStep + y1 * nChannels);
+	uchar* p12 = (pSrc + x1 * srcWidthStep + y2 * nChannels);
+	uchar* p22 = (pSrc + x2 * srcWidthStep + y2 * nChannels);
+
+	float a = tx - x1;
+	float b = ty - y1;
 	for (int i = 0; i < nChannels; i++)
-		pDstRow[i] = saturate_cast<uchar>((1 - a)*(1 - b)*pSrcRow0[i] + a * (1 - b)*pSrcRow1[i] + b * (1 - a)*pSrcRow2[i] + a * b*pSrcRow3[i]);
+		pDst[i] = saturate_cast<uchar>((1 - a)*(1 - b)*p11[i] + a * (1 - b)*p21[i] + b * (1 - a)*p12[i] + a * b*p22[i]);;
 }
 
 BilinearInterpolate::BilinearInterpolate()
