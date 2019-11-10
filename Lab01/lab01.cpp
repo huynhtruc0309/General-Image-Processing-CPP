@@ -84,15 +84,16 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(command, "--compare") == 0)
 		{
-			Mat image2 = imread(argv[3], -1);
-			if (input.empty() || image2.empty())
+			output = imread(argv[3], -1);
+			if (input.empty() || output.empty())
 			{
-				cout << "Cannot load image!\n";
+				isSuccessTrans = 0;
 			}
 			else
 			{
 				ColorTransformer ColorTrans;
-				cout << "Compare using chi-square method: " << ColorTrans.CompareImage(input, image2) << endl;
+				cout << "Compare using chi-square method: " << ColorTrans.CompareImage(input, output) << endl;
+				isSuccessTrans = 1;
 			}
 		}
 
